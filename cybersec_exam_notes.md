@@ -4,18 +4,18 @@
 |        Section               | Topic                                                                 | Page   |
 |-------------------------------|------------------------------------------------------------------------|--------|
 | 📋 QUICK REFERENCE SECTION   | Common Ports and Services                                              | [Page 3](#common-ports-and-services) |
-|                               | OWASP Top 10 Web Application Security Risks                            | Page 3 |
-|                               | Buffer Overflow Protection Mechanisms                                  | Page 4 |
-|                               | CVSS Scoring Breakdown                                                 | Page 4 |
-|                               | Cryptographic Key Strength                                             | Page 5 |
+|                               | OWASP Top 10 Web Application Security Risks                            | [Page 3](#owasp-top-10-web-application-security-risks) |
+|                               | Buffer Overflow Protection Mechanisms                                  | [Page 4](#buffer-overflow-protection-mechanisms) |
+|                               | CVSS Scoring Breakdown                                                 | [Page 4](#cvss-scoring-breakdown) |
+|                               | Cryptographic Key Strength                                             | [Page 5](#cryptographic-key-strength) |
 |                               |                                                                        |        |
-| 📖 CORE THEORY AND CONCEPTS   | 0x01 Intro and Overview                                                | Page   |
-|                               | 0x02 Cryptography                                                      | Page   |
-|                               | 0x03 Recon and OSINT - Security Assessment and Pen Testing             | Page   |
-|                               | 0x04 Networks and Scanning                                             | Page   |
-|                               | 0x05 Memory Attacks & Control Hijacking                                | Page   |
-|                               | 0x06 More Memory Attacks and Defense                                   | Page   |
-|                               | 0x07 Network Security: Attacks and Defence                             | Page   |
+| 📖 CORE THEORY AND CONCEPTS   | 0x01 Intro and Overview                                                | [Page](#0x01-intro-and-overview)   |
+|                               | 0x02 Cryptography                                                      | [Page](#0x02-cryptography)   |
+|                               | 0x03 Recon and OSINT - Security Assessment and Pen Testing             | [Page](#0x03-recon-and-osint---security-assessment-and-pen-testing)   |
+|                               | 0x04 Networks and Scanning                                             | [Page](#0x04-networks-and-scanning)   |
+|                               | 0x05 Memory Attacks & Control Hijacking                                | [Page](#0x05-memory-attacks--control-hijacking)   |
+|                               | 0x06 More Memory Attacks and Defense                                   | [Page](#0x06-more-memory-attacks-and-defense)   |
+|                               | 0x07 Network Security: Attacks and Defence                             | [Page](#0x07-network-security-attacks-and-defence)   |
 |                               |                                                                        |        |
 | 📕 QUICK THEORY REFERENCE       | Cryptography Fundamentals                                              | Page   |
 |                               | Memory Security and Buffer Overflows                                   | Page   |
