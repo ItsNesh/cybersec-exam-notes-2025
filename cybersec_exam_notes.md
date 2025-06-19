@@ -17,7 +17,7 @@
 |                               | 0x06 More Memory Attacks and Defense                                   | [Page](#0x06-more-memory-attacks-and-defense)   |
 |                               | 0x07 Network Security: Attacks and Defence                             | [Page](#0x07-network-security-attacks-and-defence)   |
 |                               |                                                                        |        |
-| 📕 QUICK THEORY REFERENCE       | Cryptography Fundamentals                                              | Page   |
+| 📕 QUICK THEORY REFERENCE       | Cryptography Fundamentals                                              | [Page](#-quick-theory-reference)   |
 |                               | Memory Security and Buffer Overflows                                   | Page   |
 |                               | Network Security                                                       | Page   |
 |                               | Web Application Security                                               | Page   |
@@ -3683,7 +3683,7 @@ hashcat -m 0 hash.txt -r /usr/share/hashcat/rules/best64.rule wordlist.txt
 
 ---
 
-## 📖 THEORY AND CONCEPTS
+# 📕 QUICK THEORY REFERENCE
 
 ## Cryptography Fundamentals
 
