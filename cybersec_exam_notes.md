@@ -1,47 +1,41 @@
 # Cybersec Exam Notes 2025
 
 ## Table of Contents
-```
-### 📋 QUICK REFERENCE SECTIONS
-- **Common Ports and Services**                      ............ Page 3
-- **OWASP Top 10 Web Application Security Risks**    ............ Page 3
-- **Buffer Overflow Protection Mechanisms**          ............ Page 4
-- **CVSS Scoring Breakdown**                         ............ Page 4
-- **Cryptographic Key Strength**                     ............ Page 5
-
-### 📖 CORE THEORY AND CONCEPTS
-- **0x01 Intro and Overview**                        ............ Page
-- **0x02 Cryptography**                              ............ Page
-- **0x03 Recon and OSINT - Security Assessment 
-  and Pen Testing**                                  ............ Page
-- **0x04 Networks and Scanning**                     ............ Page
-- **0x05 Memory Attacks & Control Hijacking**        ............ Page
-- **0x06 More Memory Attacks and Defense**           ............ Page
-- **0x07 Network Security: Attacks and Defence**     ............ Page
-
-### QUICK CONCEPT REFERENCE
-- **Cryptography Fundamentals**                      ............ Page
-- **Memory Security and Buffer Overflows**           ............ Page
-- **Network Security**                               ............ Page
-- **Web Application Security**                       ............ Page
-- **Digital Forensics and Reverse Engineering**      ............ Page
-- **Security Principles and Frameworks**             ............ Page
-- **Incident Response and Risk Management**          ............ Page
-
-### 🔧 COMMAND REFERENCE SECTIONS
-- **Nmap Scanning Commands**                         ............ Page
-- **OpenSSL Commands**                               ............ Page
-- **GDB Commands for Exploit Development**           ............ Page
-- **Metasploit Commands**                            ............ Page
-- **Wireshark Filter Syntax**                        ............ Page
-- **Volatility Memory Forensics**                    ............ Page
-- **Password Cracking (John/Hashcat)**               ............ Page
-
-### 🎯 EXAM-SPECIFIC CONTENT
-- **Assembly and Reverse Engineering Basics**        ............ Page
-- **Team Colors and Testing Types**                  ............ Page
-- **Essential Calculations and Formulas**            ............ Page
-```
+|        Section               | Topic                                                                 | Page   |
+|-------------------------------|------------------------------------------------------------------------|--------|
+| 📋 QUICK REFERENCE SECTION   | Common Ports and Services                                              | [Page 3](#common-ports-and-services) |
+|                               | OWASP Top 10 Web Application Security Risks                            | Page 3 |
+|                               | Buffer Overflow Protection Mechanisms                                  | Page 4 |
+|                               | CVSS Scoring Breakdown                                                 | Page 4 |
+|                               | Cryptographic Key Strength                                             | Page 5 |
+|                               |                                                                        |        |
+| 📖 CORE THEORY AND CONCEPTS   | 0x01 Intro and Overview                                                | Page   |
+|                               | 0x02 Cryptography                                                      | Page   |
+|                               | 0x03 Recon and OSINT - Security Assessment and Pen Testing             | Page   |
+|                               | 0x04 Networks and Scanning                                             | Page   |
+|                               | 0x05 Memory Attacks & Control Hijacking                                | Page   |
+|                               | 0x06 More Memory Attacks and Defense                                   | Page   |
+|                               | 0x07 Network Security: Attacks and Defence                             | Page   |
+|                               |                                                                        |        |
+| 📕 QUICK THEORY REFERENCE       | Cryptography Fundamentals                                              | Page   |
+|                               | Memory Security and Buffer Overflows                                   | Page   |
+|                               | Network Security                                                       | Page   |
+|                               | Web Application Security                                               | Page   |
+|                               | Digital Forensics and Reverse Engineering                              | Page   |
+|                               | Security Principles and Frameworks                                     | Page   |
+|                               | Incident Response and Risk Management                                  | Page   |
+|                               |                                                                        |        |
+| 🔧 COMMAND REFERENCE SECTION | Nmap Scanning Commands                                                 | Page   |
+|                               | OpenSSL Commands                                                       | Page   |
+|                               | GDB Commands for Exploit Development                                   | Page   |
+|                               | Metasploit Commands                                                    | Page   |
+|                               | Wireshark Filter Syntax                                                | Page   |
+|                               | Volatility Memory Forensics                                            | Page   |
+|                               | Password Cracking (John/Hashcat)                                       | Page   |
+|                               |                                                                        |        |
+| 🎯 EXAM-SPECIFIC CONTENT      | Assembly and Reverse Engineering Basics                                | Page   |
+|                               | Team Colors and Testing Types                                          | Page   |
+|                               | Essential Calculations and Formulas                                    | Page   |
 
 ---
 
