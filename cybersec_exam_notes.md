@@ -15,7 +15,11 @@
 |                               | 0x04 Networks and Scanning                                             | [Page](#0x04-networks-and-scanning)   |
 |                               | 0x05 Memory Attacks & Control Hijacking                                | [Page](#0x05-memory-attacks--control-hijacking)   |
 |                               | 0x06 More Memory Attacks and Defense                                   | [Page](#0x06-more-memory-attacks-and-defense)   |
-|                               | 0x07 Network Security: Attacks and Defence                             | [Page](#0x07-network-security-attacks-and-defence)   |
+|                               | 0x08 Web Application Security Basics                             | [Page](#0x08-web-application-security-basics)   |
+|                               | 0x09 Advanced Web Exploits                             | [Page](#0x09-advanced-web-exploits)   |
+|                               | 0x0A Digital Forensics and Reverse Engineering                             | [Page](#0x0a-digital-forensics-and-reverse-engineering)   |
+|                               | 0x0B Security Engineering Management and Frameworks                             | [Page](#0x0b-security-engineering-management-and-framework)   |
+|                               | 0x0C Introduction to Metasploit and Ethics                             | [Page](#0x0c-introduction-to-metasploit-and-ethics)   |
 |                               |                                                                        |        |
 | 📕 QUICK THEORY REFERENCE       | Cryptography Fundamentals                                              | [Page](#-quick-theory-reference)   |
 |                               | Memory Security and Buffer Overflows                                   | Page   |
@@ -25,7 +29,7 @@
 |                               | Security Principles and Frameworks                                     | Page   |
 |                               | Incident Response and Risk Management                                  | Page   |
 |                               |                                                                        |        |
-| 🔧 COMMAND REFERENCE SECTION | Nmap Scanning Commands                                                 | Page   |
+| 🔧 COMMAND REFERENCE SECTION | Nmap Scanning Commands                                                 | [Page](#-command-reference-sections)   |
 |                               | OpenSSL Commands                                                       | Page   |
 |                               | GDB Commands for Exploit Development                                   | Page   |
 |                               | Metasploit Commands                                                    | Page   |
@@ -5289,7 +5293,7 @@ cat File_B >> File_A          # Append File_B to end of File_A
 
 ---
 
-# Workshop 0x0B Security Engineering Management and Frameworks
+# 0x0B Security Engineering Management and Frameworks
 
 ## Includes Log Analysis & SIEM Exploration Using Splunk
 ### Manual Log Analysis
