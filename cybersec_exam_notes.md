@@ -3,43 +3,44 @@
 ## Table of Contents
 |        Section               | Topic                                                                 | Page   |
 |-------------------------------|------------------------------------------------------------------------|--------|
-| 📋 QUICK REFERENCE SECTION   | Common Ports and Services                                              | [Page 3](#common-ports-and-services) |
-|                               | OWASP Top 10 Web Application Security Risks                            | [Page 3](#owasp-top-10-web-application-security-risks) |
-|                               | Buffer Overflow Protection Mechanisms                                  | [Page 4](#buffer-overflow-protection-mechanisms) |
-|                               | CVSS Scoring Breakdown                                                 | [Page 4](#cvss-scoring-breakdown) |
-|                               | Cryptographic Key Strength                                             | [Page 5](#cryptographic-key-strength) |
+| 📋 QUICK REFERENCE SECTION   | Common Ports and Services                                              | [Page 2](#common-ports-and-services) |
+|                               | OWASP Top 10 Web Application Security Risks                            | [Page 2](#owasp-top-10-web-application-security-risks) |
+|                               | Buffer Overflow Protection Mechanisms                                  | [Page 2](#buffer-overflow-protection-mechanisms) |
+|                               | CVSS Scoring Breakdown                                                 | [Page 2](#cvss-scoring-breakdown) |
+|                               | Cryptographic Key Strength                                             | [Page 3](#cryptographic-key-strength) |
 |                               |                                                                        |        |
-| 📖 CORE THEORY AND CONCEPTS   | 0x01 Intro and Overview                                                | [Page](#0x01-intro-and-overview)   |
-|                               | 0x02 Cryptography                                                      | [Page](#0x02-cryptography)   |
-|                               | 0x03 Recon and OSINT - Security Assessment and Pen Testing             | [Page](#0x03-recon-and-osint---security-assessment-and-pen-testing)   |
-|                               | 0x04 Networks and Scanning                                             | [Page](#0x04-networks-and-scanning)   |
-|                               | 0x05 Memory Attacks & Control Hijacking                                | [Page](#0x05-memory-attacks--control-hijacking)   |
-|                               | 0x06 More Memory Attacks and Defense                                   | [Page](#0x06-more-memory-attacks-and-defense)   |
-|                               | 0x08 Web Application Security Basics                             | [Page](#0x08-web-application-security-basics)   |
-|                               | 0x09 Advanced Web Exploits                             | [Page](#0x09-advanced-web-exploits)   |
-|                               | 0x0A Digital Forensics and Reverse Engineering                             | [Page](#0x0a-digital-forensics-and-reverse-engineering)   |
-|                               | 0x0B Security Engineering Management and Frameworks                             | [Page](#0x0b-security-engineering-management-and-framework)   |
-|                               | 0x0C Introduction to Metasploit and Ethics                             | [Page](#0x0c-introduction-to-metasploit-and-ethics)   |
+| 📖 CORE THEORY AND CONCEPTS   | 0x01 Intro and Overview                                                | [Page 4](#cybersecurity-overview-and-career-pathways)   |
+|                               | 0x02 Cryptography                                                      | [Page 14](#1-terminology-and-fundamentals)   |
+|                               | 0x03 Recon and OSINT - Security Assessment and Pen Testing             | [Page 27](#introduction-to-security-assessment)   |
+|                               | 0x04 Networks and Scanning                                             | [Page 40](#overview-and-objectives)   |
+|                               | 0x05 Memory Attacks & Control Hijacking                                | [Page 50](#1-control-hijacking-attacks)   |
+|                               | 0x06 More Memory Attacks and Defense                                   | [Page 64](#return-to-libc-attack)   |
+|                               | 0x07 Network Attacks and Defense                                       | [Page 70](#packet-sniffing)   |
+|                               | 0x08 Web Application Security Basics                                   | [Page 82](#http-basics--web-architecture)   |
+|                               | 0x09 Advanced Web Exploits                                             | [Page 101](#javascript-fundamentals)   |
+|                               | 0x0A Digital Forensics and Reverse Engineering                         | [Page 112](#digital-forensics-and-incident-response-dfir)   |
+|                               | 0x0B Security Engineering Management and Frameworks                    | [Page 125](#security-engineering-operations-and-management)   |
+|                               | 0x0C Introduction to Metasploit and Ethics                             | [Page 137](#workshop-0x0c-introduction-to-metasploit)   |
 |                               |                                                                        |        |
-| 📕 QUICK THEORY REFERENCE       | Cryptography Fundamentals                                              | [Page](#-quick-theory-reference)   |
-|                               | Memory Security and Buffer Overflows                                   | Page   |
-|                               | Network Security                                                       | Page   |
-|                               | Web Application Security                                               | Page   |
-|                               | Digital Forensics and Reverse Engineering                              | Page   |
-|                               | Security Principles and Frameworks                                     | Page   |
-|                               | Incident Response and Risk Management                                  | Page   |
+| 📕 QUICK THEORY REFERENCE       | Cryptography Fundamentals                                              | [Page 152](#cryptography-fundamentals)   |
+|                               | Memory Security and Buffer Overflows                                   | [Page 152](#memory-security-and-buffer-overflows)   |
+|                               | Network Security                                                       | [Page 155](#network-security)   |
+|                               | Web Application Security                                               | [Page 157](#web-application-security)   |
+|                               | Digital Forensics and Reverse Engineering                              | [Page 159](#digital-forensics-and-reverse-engineering)   |
+|                               | Security Principles and Frameworks                                     | [Page 160](#security-principles-and-frameworks)   |
+|                               | Incident Response and Risk Management                                  | [Page 161](#incident-response-and-risk-management)   |
 |                               |                                                                        |        |
-| 🔧 COMMAND REFERENCE SECTION | Nmap Scanning Commands                                                 | [Page](#-command-reference-sections)   |
-|                               | OpenSSL Commands                                                       | Page   |
-|                               | GDB Commands for Exploit Development                                   | Page   |
-|                               | Metasploit Commands                                                    | Page   |
-|                               | Wireshark Filter Syntax                                                | Page   |
-|                               | Volatility Memory Forensics                                            | Page   |
-|                               | Password Cracking (John/Hashcat)                                       | Page   |
+| 🔧 COMMAND REFERENCE SECTION | Nmap Scanning Commands                                                 | [Page 146](#-command-reference-sections)   |
+|                               | OpenSSL Commands                                                       | [Page 147](#-command-reference-sections)   |
+|                               | GDB Commands for Exploit Development                                   | [Page 148](#-command-reference-sections)   |
+|                               | Metasploit Commands                                                    | [Page 149](#-command-reference-sections)   |
+|                               | Wireshark Filter Syntax                                                | [Page 150](#-command-reference-sections)   |
+|                               | Volatility Memory Forensics                                            | [Page 150](#-command-reference-sections)   |
+|                               | Password Cracking (John/Hashcat)                                       | [Page 151](#-command-reference-sections)   |
 |                               |                                                                        |        |
-| 🎯 EXAM-SPECIFIC CONTENT      | Assembly and Reverse Engineering Basics                                | Page   |
-|                               | Team Colors and Testing Types                                          | Page   |
-|                               | Essential Calculations and Formulas                                    | Page   |
+| 🎯 EXAM-SPECIFIC CONTENT      | Assembly and Reverse Engineering Basics                                | [Page 163](#assembly-and-reverse-engineering-basics)   |
+|                               | Essential Calculations and Formulas                                    | [Page 164](#essential-calculations-and-formulas)   |
+|                               | Final Exam Tips                                                        | [Page 165](#-final-exam-tips)   |
 
 ---
 
