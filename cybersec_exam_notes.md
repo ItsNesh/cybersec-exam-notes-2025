@@ -6978,6 +6978,225 @@ In 32-bit x86: double=8 bytes, long=4 bytes, char[10]=10 bytes
 
 ---
 
+# Glossary of Key Terms
+3DES: Triple DES, a symmetric-key block cipher applying DES three times with different keys to increase effective key length.
+A5: A family of stream ciphers used in mobile (GSM) communications.
+Access Controls: Security features that regulate who can view or use resources in a computing environment.
+ACK (Acknowledgement): A flag in TCP used to acknowledge the receipt of a packet.
+Address Space Layout Randomization (ASLR): A memory-protection technique that randomizes the memory locations of executable files and libraries to make exploitation harder.
+AES (Advanced Encryption Standard): A symmetric-key block cipher, currently the standard for encryption, supporting 128, 192, and 256-bit keys.
+ALE (Annualized Loss Expectancy): The expected monetary loss for an asset over a one-year period, calculated as SLE × ARO.
+ARP (Address Resolution Protocol): A protocol used to map IP network addresses to hardware (MAC) addresses.
+ARP Poisoning/Spoofing: A technique where an attacker sends forged ARP messages over a local area network to link their MAC address with the IP address of a legitimate computer or server, intercepting traffic.
+ARO (Annualized Rate of Occurrence): The estimated frequency with which a threat is expected to occur within a one-year period.
+Asset: Anything of value to an organization that needs protection, including data, services, hardware, software, and processing power.
+Attack: Any malicious activity attempting to collect, disrupt, deny, degrade, or destroy information system resources.
+Authentication Bypass: A type of attack where an attacker circumvents an authentication mechanism, often through SQL injection or weak logic.
+Availability: The security goal ensuring that information and systems are accessible to authorized users when needed.
+Avalanche Effect: A desirable property of cryptographic hash functions where a small change in input produces a drastic change in output.
+AV (Asset Value): The monetary worth of an information asset.
+Black Box Testing: A testing methodology where the tester has no prior knowledge of the internal architecture or source code of the system.
+Black Hat Hacker: A cybercriminal who engages in illegal activities for personal gain or malicious intent.
+Blind SQL Injection: An SQL injection technique where the attacker cannot directly see the results of the query but infers information based on application behavior or response times.
+Block Cipher: A symmetric-key cipher that encrypts data in fixed-size blocks (e.g., AES, DES).
+Blue Team: The defensive security team responsible for protecting an organization's assets against cyber threats.
+Botnet: A network of compromised computers (bots or zombies) controlled by a single attacker, often used for DDoS attacks or spam.
+Buffer Overflow: A vulnerability where a program writes more data to a buffer than it was allocated, overflowing into adjacent memory regions and potentially overwriting critical data or control flow information.
+Burp Suite: A popular integrated platform for performing security testing of web applications.
+Canary (Stack Canary): A random value placed on the stack between local variables and the return address to detect buffer overflows. If modified, the program terminates.
+CFI (Control Flow Integrity): A security mechanism that aims to prevent malicious code execution by ensuring that the program's control flow follows a pre-determined, legitimate path.
+Cipher: An algorithm or process used to encrypt and decrypt data.
+Ciphertext: The encrypted version of a message.
+CIRT (Cyber Incident Response Team): A team responsible for responding to cybersecurity incidents within an organization.
+CIA Triad: Confidentiality, Integrity, and Availability; fundamental security goals for information systems.
+CNAME (Canonical Name Record): A type of DNS record that maps an alias name to a true, canonical domain name.
+Collision-resistant: A property of hash functions making it computationally infeasible to find two different inputs that produce the same hash output.
+Command Injection: An attack where an attacker executes arbitrary operating system commands on a server by injecting them through user input.
+Confidentiality: The security goal of protecting sensitive information from unauthorized disclosure.
+Consequentialism: An ethical framework that judges the morality of an action based on its outcomes or consequences.
+Credentialed Scanning: A vulnerability scan performed with valid authentication credentials for the target system, allowing for deeper inspection.
+Cryptography: The practical development and study of encryption systems.
+Cryptanalysis: The academic study of analyzing and breaking cryptographic systems.
+Cryptology: The academic (mathematical) study of encryption and their properties.
+CSRF (Cross-Site Request Forgery): An attack that tricks a victim into submitting a malicious request to a web application in which they are already authenticated.
+CVE (Common Vulnerabilities and Exposures): A list of publicly disclosed cybersecurity vulnerabilities.
+CVSS (Common Vulnerability Scoring System): An open framework for communicating the characteristics and impacts of IT vulnerabilities.
+CWE (Common Weakness Enumeration): A community-developed list of common software security weaknesses.
+DDoS (Distributed Denial-of-Service): A DoS attack launched from multiple compromised computer systems acting as "bots" or "zombies."
+Decompiler: A program that attempts to translate machine code or bytecode back into a higher-level programming language.
+Defense in Depth: A cybersecurity strategy that employs multiple layers of security controls to protect against threats.
+Deontological Ethics: An ethical framework that bases morality on adherence to rules and duties, rather than outcomes.
+DEP/NX (Data Execution Prevention/No-Execute Bit): A security feature that marks certain memory regions as non-executable, preventing code from running from data-only areas.
+DES (Data Encryption Standard): A symmetric-key block cipher, now considered deprecated due to its small key size.
+Deterministic: A property of hash functions meaning the same input will always produce the same hash output.
+DHCP (Dynamic Host Configuration Protocol): A network protocol used to automatically assign IP addresses and other network configuration parameters to devices connected to a network.
+Digital Forensics and Incident Response (DFIR): The field within cybersecurity focused on identifying, investigating, and remediating security incidents.
+Digital Signature: A mathematical technique used to validate the authenticity and integrity of a message or document, created using a private key and verified with a public key.
+Dirb: A command-line tool for web content discovery (directory busting).
+Directory Traversal: An attack that allows an attacker to access files and directories stored outside the web root folder by manipulating file paths, typically using "../" sequences.
+Disassembler: A program that translates machine code into assembly language.
+Discrete Logarithm Problem: The mathematical problem underpinning the security of Diffie-Hellman key exchange, involving finding the exponent in modular arithmetic.
+DMZ (Demilitarized Zone): A subnetwork that exposes an organization's external-facing services to a larger untrusted network (like the internet) while isolating the internal local area network.
+DNS (Domain Name System): A hierarchical and decentralized naming system for computers, services, or other resources connected to the Internet or a private network. It translates domain names to IP addresses.
+DNS Amplification Attack: A type of DDoS attack that uses open DNS resolvers to magnify an attacker's initial traffic into a larger attack against a target.
+DNS Spoofing: An attack where an attacker intercepts DNS queries and sends fake responses to redirect users to malicious websites.
+DoS (Denial of Service): An attack aimed at making a machine or network resource unavailable to its intended users.
+Driftnet: A tool for sniffing and extracting images from TCP streams.
+dsniff: A collection of tools for network auditing and penetration testing, including password sniffers.
+Duty-Focused (Deontological) Ethics: An ethical framework that emphasizes moral duties and rules, regardless of the consequences.
+EBP (Extended Base Pointer): An x86 register that typically points to the base of the current stack frame.
+EF (Exposure Factor): The percentage of asset loss caused by a specific threat.
+EIP (Extended Instruction Pointer): An x86 register that points to the memory address of the next instruction to be executed by the CPU.
+Encryption: The process of encoding information in such a way that only authorized parties can access it.
+ESP (Extended Stack Pointer): An x86 register that points to the current top (bottom in terms of address) of the stack.
+Ettercap: A suite for Man-in-the-Middle attacks on LAN, including live connections sniffing, content filtering, and ARP spoofing.
+FIN (Finish): A flag in TCP used to indicate the termination of a connection.
+Fixed-length Output: A property of hash functions meaning the output hash always has the same size, regardless of the input data's size.
+Foreign States (Threat Actor): Nation-states conducting cyber operations, often motivated by political influence or espionage.
+Forced Browsing: An attack where an attacker attempts to access files or directories that are not explicitly linked from the website, hoping to find sensitive information.
+Format String Vulnerability: A software vulnerability that occurs when user-supplied input is directly used as the format string parameter in a function like printf, allowing an attacker to read from or write to arbitrary memory locations.
+GDB (GNU Debugger): A powerful command-line debugger for various programming languages, often used in exploit development.
+GDPR (General Data Protection Regulation): A regulation in EU law on data protection and privacy for all individuals within the European Union and the European Economic Area.
+Ghidra: A free and open-source reverse engineering tool developed by the NSA, used for static analysis and decompilation.
+Grey Hat Hacker: A hacker who may break laws or ethical norms but typically without malicious intent, often to discover vulnerabilities and report them.
+Hacktivists: Threat actors motivated by political influence and publicity, often engaging in website defacement or DDoS attacks.
+Hash Function: A mathematical algorithm that maps data of arbitrary size to a fixed-size bit string (the hash value or message digest).
+Hashcat: A powerful password cracking utility often used for offline cracking.
+Heap Spraying: A technique used in exploit development to reliably place exploit code (like shellcode) at a predictable memory location on the heap.
+Hexdump: A utility used to display binary data in a hexadecimal format.
+Hobbyists: Threat actors motivated by curiosity, fun, and fame, often engaging in low-impact activities like website defacement.
+Hosts File Poisoning: An attack that modifies a local hosts file to redirect specific domain names to malicious IP addresses.
+HTTP (Hypertext Transfer Protocol): The foundation of data communication for the World Wide Web.
+HttpOnly Cookie Flag: A cookie attribute that prevents client-side scripts from accessing the cookie, mitigating XSS-related session hijacking.
+ICMP (Internet Control Message Protocol): A helper protocol used by network devices to send error messages and operational information.
+IDS/IPS (Intrusion Detection System/Intrusion Prevention System): Systems that monitor network or system activities for malicious activity or policy violations and can optionally take action to prevent them.
+Industrial Espionage: Threat actors driven by profit to steal trade secrets or proprietary information from competing businesses.
+Integrity: The security goal of ensuring that information has not been tampered with or modified by unauthorized parties.
+John the Ripper: A popular password cracking software tool.
+Key: A secret parameter used in conjunction with a cipher to encrypt and decrypt messages.
+KEV (Known Exploited Vulnerabilities): A catalog of vulnerabilities that have been actively exploited in the wild, maintained by CISA.
+Linux Commands: Basic commands for navigating and manipulating files, directories, processes, and network settings in a Linux environment.
+Logic Bomb: A malicious piece of code intentionally inserted into a software system that activates when specific conditions are met.
+LSB (Least Significant Bit) Substitution: A steganography technique that hides data by altering the least significant bits of pixel data in an image.
+Maltego: A visual intelligence and forensics application for link analysis and data visualization, used for OSINT.
+Man-in-the-Middle (MITM) Attack: An attack where the attacker secretly relays and possibly alters the communication between two parties who believe they are directly communicating with each other.
+MD5: A widely used cryptographic hash function, now considered insecure due to known collision vulnerabilities.
+Memory Tagging: A hardware-assisted security mechanism that tags memory regions and pointers with metadata to prevent memory corruption vulnerabilities like buffer overflows and use-after-free.
+Metasploit Framework: A powerful open-source penetration testing framework used for developing, testing, and executing exploits.
+Metasploitable2: An intentionally vulnerable Linux virtual machine designed for security testing and exploit development practice.
+Microsegmentation: A network security technique that creates granular security zones to isolate workloads and apply specific security policies, typically within a data center or cloud environment.
+Mitigate (Risk Treatment): Implementing controls to reduce the likelihood or impact of a risk.
+MX (Mail Exchange Record): A type of DNS record that specifies the mail server responsible for accepting email messages on behalf of a domain name.
+Nmap: A free and open-source network scanner used to discover hosts and services on a computer network.
+NOP Sled: A sequence of No Operation (NOP) instructions (0x90 in x86 assembly) used in exploit development to create a larger "landing pad" for shellcode, making exploitation more reliable.
+Non-credentialed Scanning: A vulnerability scan performed without authentication, from an external attacker's perspective.
+Non-repudiation: A property ensuring that a party cannot successfully deny having made a statement or taken an action. Provided by digital signatures.
+NS (Name Server Record): A type of DNS record that specifies the authoritative name servers for a domain.
+NVD (National Vulnerability Database): The U.S. government repository of standards-based vulnerability management data, including CVSS scores.
+Offline Cracking: Cracking passwords by obtaining hashed passwords and attempting to crack them without directly interacting with the live authentication system.
+One-Time Pad: An encryption technique that uses a truly random key as long as the plaintext, resulting in mathematically proven perfect secrecy.
+One-way Function: A property of hash functions meaning it is computationally infeasible to reverse the hash to get the original input.
+Online Cracking: Cracking passwords by directly interacting with the authentication system, often through brute-force or dictionary attacks.
+Organized Crime (Threat Actor): Groups motivated by profit, engaging in activities like ransomware, identity theft, and cyber extortion.
+OS Fingerprinting: The process of determining the operating system of a remote host by analyzing its network traffic patterns or responses to specific probes.
+OSINT (Open-Source Intelligence): The process of collecting and analyzing information from publicly available sources for intelligence purposes.
+OWASP Top 10: A standard awareness document for developers and web application security professionals, representing the most critical security risks to web applications.
+Packet Sniffing: The act of capturing and analyzing data packets flowing across a computer network.
+Penetration Testing: An authorized simulated cyberattack on a computer system, network, or web application to evaluate its security.
+PHP (Hypertext Preprocessor): A popular server-side scripting language designed for web development.
+PIE (Position Independent Executable): An executable binary compiled to run correctly regardless of its base address in memory, often used in conjunction with ASLR.
+Piping Commands (|): A Linux feature that sends the output of one command as the input to another command.
+Plaintext: The original, unencrypted message.
+Port Mirroring: A feature on network switches that sends a copy of network packets seen on one port (or an entire VLAN) to another port, used for monitoring.
+Port Numbers: Numbers used to identify specific processes or services on a network, ranging from 1 to 65535.
+Port Scanning: The process of sending client requests to a range of server port addresses on a host, with the goal of finding active ports and assessing the services running on them.
+Prepared Statements: A method of executing database queries that separates the SQL code from the user input, effectively preventing SQL injection attacks.
+Private Key: In asymmetric encryption, the secret key known only to the owner, used for decryption or digital signing.
+Process Memory Layout: The arrangement of different memory segments (text, data, BSS, heap, stack) within a running program's address space.
+PSH (Push): A flag in TCP used to indicate that data should be pushed immediately to the application.
+PTR (Pointer Record): A type of DNS record used for reverse DNS lookups, mapping an IP address to a hostname.
+PTES (Penetration Testing Execution Standard): A comprehensive guideline for conducting penetration tests.
+Public Key: In asymmetric encryption, the key that is publicly known and used for encryption or verifying digital signatures.
+Purple Team: A cybersecurity team that combines the offensive tactics of the Red Team with the defensive strategies of the Blue Team to improve overall security.
+Qualitative Risk Analysis: A method of risk assessment that uses descriptive terms (e.g., Low, Medium, High) to evaluate risk based on impact and likelihood.
+Quantitative Risk Analysis: A method of risk assessment that uses numerical values to calculate risk, often involving monetary values.
+RC4: A stream cipher widely used in wireless networks (e.g., WEP/WPA).
+Reconnaissance: The first phase of a penetration test, involving gathering information about the target.
+Red Team: The offensive security team that simulates attacks against an organization's systems to test their defenses.
+Redundancy: The duplication of critical components or functions of a system to increase its reliability and availability.
+Relative Path: A file path that describes the location of a file or directory relative to the current working directory.
+Return to libc: An attack technique used to bypass Data Execution Prevention (DEP) by redirecting program execution to existing functions within shared libraries (like libc) instead of injecting shellcode.
+Reverse Engineering: The process of deconstructing a product or system to understand its workings, often with the goal of learning from or improving upon it.
+Risk: A measure of the extent to which an entity is threatened by a potential circumstance or event, typically measured as a function of impact and likelihood.
+Risk Appetite: The amount of risk an organization is willing to accept to achieve its objectives.
+Risk Matrix: A tool used in qualitative risk analysis to plot the likelihood and impact of risks to determine their overall severity.
+Risk Treatment: The process of selecting and implementing measures to modify risk.
+ROP (Return-Oriented Programming): An advanced exploit technique that bypasses DEP by chaining together small snippets of executable code (gadgets) already present in the program or libraries.
+RSA: A widely used asymmetric encryption algorithm, relying on the difficulty of factoring large numbers for its security.
+RST (Reset): A flag in TCP used to immediately terminate a connection.
+Salt: A random value added to a password before hashing, used to prevent rainbow table attacks.
+SameSite Cookie Flag: A cookie attribute that controls whether cookies are sent with cross-site requests, helping to prevent CSRF attacks.
+Secure Cookie Flag: A cookie attribute that ensures the cookie is only sent over HTTPS (encrypted connections), protecting it from MITM attacks.
+Security Analyst: An entry-level cybersecurity role focused on monitoring, detecting, and analyzing security incidents.
+Security Architect: A senior-level role responsible for designing and building secure IT systems and infrastructure.
+Security Engineer: A mid-level technical role involved in implementing, maintaining, and troubleshooting security systems.
+Security Researcher: A mid-level technical role that identifies new vulnerabilities and develops exploits.
+Service Version Detection: The process of identifying the specific software and version running on an open port.
+Shadow Stack: A hardware-assisted defense mechanism that maintains a separate, protected copy of return addresses to detect and prevent control flow hijacking attacks.
+SHA-1 (Secure Hash Algorithm 1): A cryptographic hash function, now considered deprecated due to known collision vulnerabilities.
+SHA-256/SHA-512: Cryptographic hash functions that are part of the SHA-2 family, currently considered secure.
+Shellcode: A small piece of assembly code used as a payload in exploits, typically to gain a command shell on the target system.
+Shodan.io: A search engine for Internet-connected devices, used for OSINT and discovering open ports/services.
+Signature-Based Detection: An IDS/IPS methodology that identifies threats by comparing network traffic or system activity against a database of known attack signatures.
+SLE (Single Loss Expectancy): The expected monetary loss if a specific threat successfully exploits a vulnerability once, calculated as AV × EF.
+Smurf Attack: A DDoS attack that uses ICMP Echo requests sent to a broadcast address with the victim's spoofed IP, causing all hosts on the network to reply to the victim.
+SOA (Start of Authority Record): A type of DNS record that contains administrative information about a DNS zone, including the primary name server.
+SOC Analyst (Security Operations Center Analyst): An entry-level role responsible for monitoring security systems, analyzing alerts, and responding to incidents.
+SQL Injection: A web security vulnerability that allows an attacker to interfere with the queries that an application makes to its database.
+SQLMap: An open-source penetration testing tool that automates the process of detecting and exploiting SQL injection flaws.
+SSRF (Server-Side Request Forgery): A web security vulnerability that allows an attacker to trick the server-side application into making an HTTP request to an arbitrary domain.
+SSH (Secure Shell): A cryptographic network protocol for operating network services securely over an unsecured network, commonly used for remote command-line access.
+Stack Canaries: See Canary.
+Stack Frame: A data structure that stores information about a function call on the call stack, including arguments, return address, and local variables.
+Static Analysis: Examining software code without executing it, often using tools to identify vulnerabilities or understand its structure.
+Steganalysis: The art of detecting and extracting hidden messages embedded using steganography.
+Steganography: The art and science of hiding messages or information within other non-secret data, to avoid detection.
+Stream Cipher: A symmetric-key cipher that encrypts data one bit or byte at a time (e.g., RC4).
+Stretching (Password Hashing): Intentionally making password hashing computationally intensive (slow) to deter brute-force attacks and rainbow table attacks.
+SUID (Set User ID): A special file permission in Unix-like systems that allows users to execute an executable with the permissions of the file owner.
+Symmetric Encryption: An encryption method where the same secret key is used for both encryption and decryption.
+SYN (Synchronize): A flag in TCP used to initiate a connection.
+SYN Cookies: A SYN Flood countermeasure where the server avoids allocating resources for a half-open connection until the client's ACK packet is received, validating a cryptographic cookie.
+TCP (Transmission Control Protocol): A core protocol of the Internet protocol suite, providing reliable, ordered, and error-checked delivery of a stream of octets between applications.
+TCP Full Connect Scan: A port scanning technique that completes the full TCP three-way handshake to determine if a port is open. Easily logged.
+TCP Reset (RST) Injection: An attack where an attacker injects a forged TCP RST packet into an active connection to abruptly terminate it.
+TCP SYN Scan (Half-Open Scan): A stealthy port scanning technique that sends a SYN packet and determines port status based on the SYN-ACK or RST response, without completing the handshake. Default Nmap scan.
+Telnet: An older network protocol used to provide a bidirectional interactive text-oriented communication facility using a virtual terminal connection, insecure due to plaintext transmission.
+Terrorists: Threat actors motivated by political influence and publicity, often engaging in cyberattacks to cause disruption or fear.
+Threat: The potential for a violation of security, such as a malware infection or data breach.
+Threat Actor: An individual or group that poses a threat to an organization's security.
+TLS (Transport Layer Security): The successor to SSL, a cryptographic protocol designed to provide communication security over a computer network.
+Traceroute: A network diagnostic tool that displays the path (route) and measures transit delays of packets across an Internet Protocol (IP) network.
+Transfer (Risk Treatment): Shifting the risk to another party, for example, by buying insurance or outsourcing.
+UDP (User Datagram Protocol): A connectionless, unreliable transport layer protocol often used for speed-sensitive applications like DNS, DHCP, and streaming.
+Uncredenialed Scanning: See Non-credentialed Scanning.
+UNION SELECT: An SQL injection technique that allows an attacker to combine the results of two or more SELECT statements, often used to extract data from other tables.
+URG (Urgent): A flag in TCP used to indicate that certain data within the segment is urgent.
+Use-After-Free: A memory corruption vulnerability that occurs when a program attempts to use memory after it has been deallocated, which can lead to crashes or arbitrary code execution if an attacker can control the freed memory.
+Vulnerability: A flaw or weakness in system design, implementation, or operation that could be exploited by a threat.
+Vulnerability Assessment: The process of identifying, quantifying, and prioritizing vulnerabilities in a system or network.
+Virtue Ethics: An ethical framework that focuses on the character of the moral agent rather than the specific actions or their consequences.
+Von Neumann Architecture: A computer architecture concept where both program instructions and data are stored in the same memory space.
+White Box Testing: A testing methodology where the tester has full knowledge of the internal structure, design, and implementation of the system being tested.
+White Hat Hacker: See Ethical Hacker.
+WHOIS: A query and response protocol widely used for querying databases that store the registered users or assignees of an Internet resource, such as a domain name.
+Wireshark: A popular free and open-source packet analyzer used for network troubleshooting, analysis, software and communications protocol development, and education.
+XMAS Scan: A stealthy port scanning technique that sends a TCP packet with FIN, PSH, and URG flags set.
+XOR (Exclusive OR): A logical bitwise operation fundamental to many cryptographic algorithms.
+XSS (Cross-Site Scripting): A web security vulnerability that enables attackers to inject client-side scripts into web pages viewed by other users.
+
+---
+
 ## 🚨 CRITICAL EXAM REMINDERS
 
 ### Multiple Choice Strategy
