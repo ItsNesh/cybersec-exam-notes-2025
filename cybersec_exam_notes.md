@@ -729,6 +729,22 @@ Can deduce locations of spaces, then work out M1, M2, and K
 Common paint + secret colors = public transport colors
 Mix with other's public color + own secret = same final color
 
+### **Diffie-Hellman MITM Attack (Mallory's Attack)**
+**Scenario**: Mallory intercepts communication between Alice and Bob
+
+**Attack Steps**:
+1. **Alice wants to establish shared key with Bob**
+2. **Mallory intercepts Alice's public value A = g^a mod p**
+3. **Mallory generates her own secret m, sends M = g^m mod p to Bob**
+4. **Bob receives M (thinking it's from Alice), sends B = g^b mod p**
+5. **Mallory intercepts B, sends her own M' = g^m' mod p to Alice**
+6. **Result**: 
+   - Alice and Mallory share key K₁ = g^(am) mod p
+   - Bob and Mallory share key K₂ = g^(bm') mod p
+   - Mallory can decrypt all communication from both parties
+
+**Defense**: Authentication (certificates, pre-shared secrets) to verify identity
+
 ---
 
 ## 7. Asymmetric Encryption (RSA)
@@ -3141,6 +3157,27 @@ Prevent DNS spoofing through cryptographic authentication
 2. **TLD Server**: Provides signed delegation to domain
 3. **Domain Server**: Provides signed answer record
 4. **Verification**: Each step verified using parent's signature
+
+### **DNS over TCP vs UDP Security Considerations**
+
+#### DNS over UDP (Default - Port 53)
+- **Characteristics**: Connectionless, lightweight, fast
+- **Vulnerabilities**: Easy to spoof source IP, no inherent reliability
+- **MITM Susceptibility**: High - attacker can easily inject fake responses
+
+#### DNS over TCP (Port 53)
+- **When Used**: Large responses (>512 bytes), zone transfers, reliability needed
+- **TCP Guarantees**:
+  - ✅ **Reliability**: Packet delivery confirmation, retransmission
+  - ✅ **Ordering**: In-sequence delivery
+  - ✅ **Error Detection**: Basic checksum validation
+- **What TCP Does NOT Guarantee Against MITM**:
+  - ❌ **Confidentiality**: Data still plaintext, attacker can read
+  - ❌ **Integrity**: Attacker can modify data in transit
+  - ❌ **Authenticity**: No verification of server identity
+  - ❌ **Replay Protection**: Attacker can replay valid responses
+
+**Key Point**: Raw TCP provides transport reliability but NOT cryptographic security. For true MITM protection, need DNS over TLS (DoT), DNS over HTTPS (DoH), or DNSSEC.
 
 ---
 
@@ -6093,6 +6130,22 @@ sudo apt install armitage
 
 ### Professional Ethics Context
 
+#### **Australian Computer Society (ACS) Code of Ethics**
+**Number of Core Values**: **6 Values**
+
+**The Six Values**:
+1. **The Primacy of the Public Interest**
+2. **The Enhancement of Quality of Life**  
+3. **Honesty**
+4. **Competence**
+5. **Professional Development**
+6. **Professionalism**
+
+**Key Components**:
+- **Professional Conduct Rules**: Detailed guidelines for behavior
+- **Professional Standards**: Technical and ethical benchmarks
+- **Continuing Professional Development**: Ongoing learning requirements
+
 #### Current Industry Focus
 - **Legal Compliance**: Avoiding legislation violations
 - **Financial Protection**: Preventing substantial fines
@@ -6601,6 +6654,25 @@ Client → Server: ACK
 2. Extract challenge/response
 3. Offline brute-force attack against captured handshake
 
+#### **WPA2-PSK Decryption Scope After PSK Discovery**
+
+**Scenario**: Attacker records WiFi session, later discovers PSK through brute-force
+
+**What CAN be decrypted**:
+- ✅ **Recorded session data**: If handshake was captured
+- ✅ **All traffic from that specific session**: Using derived PTK/GTK
+- **Process**:
+  1. Use discovered PSK + captured nonces (ANonce, SNonce)
+  2. Derive session keys: PTK = f(PSK, ANonce, SNonce, MAC addresses)
+  3. Decrypt all recorded frames using derived keys
+
+**What CANNOT be decrypted**:
+- ❌ **Future sessions without new handshake capture**: Session keys change
+- ❌ **Past sessions with different nonces**: Each handshake creates unique keys
+- **Reason**: Session keys (PTK/GTK) are ephemeral, derived using unique nonces per connection
+
+**Key Insight**: PSK alone isn't enough - attacker needs BOTH the PSK AND the specific handshake (nonces) to decrypt that session's traffic.
+
 ### Amplification Attacks
 - **Concept**: Small request triggers large response
 - **UDP preference**: Connectionless protocol easier to spoof
@@ -6826,6 +6898,482 @@ find /usr -name "rockyou*"  # Files starting with "rockyou"
 
 ---
 
+# Exam Specific Content
+
+## Memory Security & Buffer Overflows
+
+### Stack Structure and Memory Layout
+```
+High Memory Address (0xFFFFFFFF)
+┌─────────────────────┐
+│       STACK         │ ← Grows downwards
+├─────────────────────┤
+│    (Free Space)     │
+├─────────────────────┤
+│       HEAP          │ ← Grows upwards
+├─────────────────────┤
+│        BSS          │ ← Uninitialized global
+├─────────────────────┤
+│       DATA          │ ← Initialized global/static
+├─────────────────────┤
+│   CODE (TEXT)       │ ← Executable instructions
+└─────────────────────┘
+Low Memory Address (0x00000000)
+```
+
+### Stack Frame Structure
+```
+┌─────────────────────┐
+│    Arguments        │
+├─────────────────────┤
+│  Return Address     │ ← Target for overflow
+├─────────────────────┤
+│ Saved Frame Pointer │ ← EBP
+├─────────────────────┤
+│  Local Variables    │ ← Buffer location
+└─────────────────────┘
+```
+
+### x86 Registers
+- **EIP (Extended Instruction Pointer)**: Points to current instruction
+- **ESP (Extended Stack Pointer)**: Points to top of stack
+- **EBP (Extended Base Pointer)**: Points to base of current stack frame
+
+### Buffer Overflow Attack Process
+1. **Identify vulnerable function**: `gets()`, `strcpy()`, `sprintf()`
+2. **Calculate offset**: Distance from buffer to return address
+3. **Craft payload**: `[Filler] + [Return Address] + [Shellcode]`
+4. **Execute**: Overwrite return address to point to shellcode
+
+### Assembly Instructions
+```assembly
+mov eax, 0x10        ; Move value to register
+sub eax, 0x10        ; Subtract from register
+cmp eax, 0x10        ; Compare values (sets flags)
+call 0x8004bc       ; Call function
+ret                 ; Return from function
+jmp 0x8004bc        ; Unconditional jump
+```
+
+### Defense Mechanisms
+
+#### Stack Canaries
+- Random values placed before return address
+- Checked on function return
+- **Bypass**: Leak canary value, partial overwrites
+
+#### ASLR (Address Space Layout Randomization)
+- Randomizes memory layout of processes
+- **Bypass**: Information leaks, brute force
+
+#### DEP/NX (Data Execution Prevention)
+- Marks stack/heap as non-executable
+- **Bypass**: Return-to-libc, ROP chains
+
+#### PIE (Position Independent Executable)
+- Randomizes executable base address
+- **Bypass**: Information disclosure
+
+### Format String Vulnerabilities
+```c
+// Vulnerable
+printf(user_input);
+
+// Safe
+printf("%s", user_input);
+```
+
+**Attack Examples**:
+- `%x %x %x %x` - Read stack values
+- `%n` - Write to memory location
+
+### NOP Sled and Shellcode
+- **NOP Sled**: Series of `\x90` instructions creating larger target
+- **Shellcode**: Small assembly code to execute shell
+- **Payload Structure**: `[NOP Sled] + [Shellcode] + [Padding] + [Return Address]`
+
+---
+
+## Cryptography Fundamentals
+
+### Core Security Goals (CIA+)
+- **Confidentiality**: Protect from unauthorized disclosure
+- **Integrity**: Prevent unauthorized modification
+- **Availability**: Ensure access when needed (NOT a crypto goal)
+- **Authentication**: Verify identity
+- **Non-repudiation**: Prevent denial of actions
+
+### Symmetric vs Asymmetric Encryption
+
+#### Symmetric Encryption
+- **Same key** for encryption and decryption
+- **Problem**: Key distribution challenge
+- **Algorithms**: AES, DES, 3DES
+- **Use**: Fast bulk encryption
+
+#### Asymmetric Encryption
+- **Key pairs**: Public (shareable) and private (secret)
+- **Digital Signatures**: Sign with private, verify with public
+- **Encryption**: Encrypt with public, decrypt with private
+- **Algorithms**: RSA, ECC
+
+### Diffie-Hellman Key Exchange
+```
+Public: g, p
+Alice: chooses secret a, sends A = g^a mod p
+Bob: chooses secret b, sends B = g^b mod p
+Shared Secret: K = g^(ab) mod p
+```
+
+### Hash Functions
+- **Properties**: One-way, fixed output, deterministic, avalanche effect
+- **MD5**: Broken (collisions found)
+- **SHA-1**: Deprecated
+- **SHA-256/SHA-3**: Current standards
+
+### Digital Signatures
+```
+1. Hash document: H(M)
+2. Encrypt hash with private key: S = E(H(M), K_priv)
+3. Verify: H(M) = D(S, K_pub)
+```
+
+### Password Security
+- **Plain Storage**: Never acceptable
+- **Simple Hashing**: Vulnerable to rainbow tables
+- **Salted Hashing**: Random salt per password
+- **Stretched Hashing**: Slow algorithms (bcrypt, Argon2)
+
+### Kerckhoff's Principle
+Security should depend only on secrecy of the key, not the algorithm.
+
+---
+
+## Network Security
+
+### TCP Three-Way Handshake
+```
+Client → Server: SYN
+Server → Client: SYN-ACK
+Client → Server: ACK
+```
+
+### Port Scanning Techniques
+
+#### TCP SYN Scan (Half-Open)
+- Send SYN, receive SYN-ACK/RST, send RST
+- **Stealthy**: Doesn't complete handshake
+- **Default**: Nmap default scan
+
+#### TCP Connect Scan
+- Complete full three-way handshake
+- **Logged**: Easily detected
+- **Accurate**: Works through any TCP stack
+
+#### Stealth Scans
+- **FIN Scan**: Send FIN only
+- **NULL Scan**: No flags set
+- **XMAS Scan**: FIN+PSH+URG flags
+
+### Nmap Common Commands
+```bash
+nmap -sS target           # SYN scan
+nmap -sT target           # TCP connect scan
+nmap -sU target           # UDP scan
+nmap -O target            # OS detection
+nmap -sV target           # Version detection
+nmap -A target            # Aggressive (OS, version, scripts)
+nmap -p 1-1000 target     # Port range
+nmap -T4 target           # Timing template
+```
+
+### ARP Poisoning Attack
+1. **Normal**: Host asks "Who has IP X?" → Response "MAC Y has IP X"
+2. **Attack**: Attacker responds with own MAC for gateway IP
+3. **Result**: Victim sends traffic to attacker instead of gateway
+4. **Tools**: `arpspoof`, `ettercap`
+
+### DNS Attacks
+- **DNS Spoofing**: Send fake DNS responses
+- **Tools**: `dnsspoof`
+- **Defense**: DNSSEC (digital signatures)
+
+### DoS/DDoS Attacks
+
+#### SYN Flood
+- Send many SYN packets with spoofed IPs
+- Server resources exhausted by half-open connections
+- **Defense**: SYN cookies
+
+#### Amplification Attacks
+- Small request → Large response
+- **Examples**: DNS, NTP amplification
+- Spoofed victim IP in requests
+
+### WiFi Security
+
+#### WPA2-PSK Attack
+1. Capture 4-way handshake
+2. Offline brute-force password
+3. **Tools**: `aircrack-ng`, `hashcat`
+
+#### Attack Timeline
+- **WEP**: Broken (2004)
+- **WPA**: Transitional (2003)
+- **WPA2**: Current standard (2004)
+- **WPA3**: Latest (2018), but has vulnerabilities
+
+---
+
+## Digital Forensics & Reverse Engineering
+
+### File Analysis Tools
+```bash
+file suspicious.png              # Identify file type
+strings suspicious.png           # Extract readable strings
+hexdump -C suspicious.png        # Hex dump
+binwalk suspicious.png           # Find embedded files
+exiftool suspicious.png          # Metadata extraction
+```
+
+### File Carving
+```bash
+# Extract embedded file
+dd if=image.png of=hidden.pdf skip=12345 bs=1 count=67890
+```
+
+### Steganography
+- **Definition**: Hide existence of message (not just content)
+- **LSB Substitution**: Modify least significant bits in images
+- **Capacity**: ~1/8 of original image size
+- **Tools**: `steghide`, StegOnline, Stegsolve
+
+### Network Forensics with Wireshark
+```bash
+# Common filters
+ip.addr == 192.168.1.1          # Traffic to/from IP
+tcp.port == 80                  # Port 80 traffic
+http.request.method == "POST"   # HTTP POST requests
+tcp.flags.syn == 1              # SYN packets
+```
+
+**Analysis Tasks**:
+- Extract HTTP objects: File → Export Objects → HTTP
+- Follow TCP streams: Right-click → Follow → TCP Stream
+
+### Static vs Dynamic Analysis
+- **Static**: Examine code without execution (disassemblers)
+- **Dynamic**: Run and observe behavior (debuggers)
+
+### Assembly Language
+- **Lowest-level** human-readable programming language
+- **1:1 correspondence** with machine instructions
+- **Intel vs AT&T** syntax differences
+
+### Reverse Engineering Tools
+- **Ghidra**: NSA tool, Java-based, open source
+- **IDA Pro**: Commercial standard
+- **GDB**: GNU debugger for dynamic analysis
+
+---
+
+## Security Frameworks & Management
+
+### Risk Management Formulas
+```
+Risk = Threat × Vulnerability
+SLE = Asset Value × Exposure Factor
+ALE = SLE × ARO
+
+Example:
+Asset Value = $1,000,000
+Exposure Factor = 50% (0.5)
+ARO = 0.2 (once every 5 years)
+SLE = $1,000,000 × 0.5 = $500,000
+ALE = $500,000 × 0.2 = $100,000
+```
+
+### Risk Treatment Options
+1. **Accept**: Define risk appetite
+2. **Transfer**: Insurance, outsourcing
+3. **Mitigate**: Implement controls
+4. **Avoid**: Eliminate activity
+
+### CVSS Scoring System
+| **Rating** | **CVSS Score** |
+|------------|----------------|
+| None       | 0.0            |
+| Low        | 0.1 – 3.9      |
+| Medium     | 4.0 – 6.9      |
+| High       | 7.0 – 8.9      |
+| Critical   | 9.0 – 10.0     |
+
+### Security Principles
+
+#### Defense in Depth
+- Multiple layers of security controls
+- Prevent AND detect
+- Different vendors for each layer
+
+#### Least Privilege
+- Minimum necessary access
+- Limit damage from compromise
+
+#### Fail Securely
+- System fails to secure state
+- Default deny policies
+
+#### Zero Trust
+- "Never trust, always verify"
+- Assume breach mentality
+
+### Control Types
+- **Administrative**: Policies, procedures
+- **Physical**: Locks, barriers
+- **Technical**: Software, configurations
+
+**By Function**:
+- **Preventive**: Block attacks
+- **Detective**: Identify attacks
+- **Corrective**: Respond to incidents
+
+### Team Colors
+- **Red Team**: Offensive security (attackers)
+- **Blue Team**: Defensive security (defenders)
+- **Purple Team**: Red + Blue collaboration
+- **White Team**: Management/referees
+
+### SOC Operations Cycle
+1. **Assess**: Vulnerability scanning, penetration testing
+2. **Intelligence**: Threat feeds, IOCs
+3. **Threat Hunting**: Proactive searching
+4. **Detect**: SIEM alerts, monitoring
+5. **Respond**: Incident response
+6. **Recover**: Business continuity
+
+---
+
+## Command References
+
+### Metasploit Framework
+```bash
+msfconsole                      # Start Metasploit
+search <term>                   # Search modules
+use <module>                    # Select module
+show options                    # Display options
+set <option> <value>            # Configure option
+exploit                         # Run exploit
+sessions -l                     # List sessions
+```
+
+### OpenSSL Commands
+```bash
+# Key generation
+openssl genrsa -out private.key 2048
+openssl rsa -in private.key -pubout -out public.key
+
+# Encryption
+openssl enc -aes-256-cbc -in file.txt -out file.enc
+
+# Hashing
+openssl dgst -sha256 file.txt
+openssl passwd -6 password      # SHA-512 hash
+```
+
+### GDB for Exploit Development
+```bash
+gdb ./program                   # Start debugger
+break main                      # Set breakpoint
+run                            # Execute program
+x/10x $esp                     # Examine stack
+info registers                 # Show registers
+disas main                     # Disassemble function
+```
+
+### Password Cracking Tools
+```bash
+# John the Ripper
+john --wordlist=rockyou.txt hash.txt
+john --format=NT hash.txt
+
+# Hashcat
+hashcat -m 0 hash.txt rockyou.txt    # MD5
+hashcat -m 1000 hash.txt rockyou.txt # NTLM
+```
+
+### Volatility Memory Forensics
+```bash
+volatility -f memory.dump imageinfo
+volatility -f memory.dump --profile=Win7SP1x64 pslist
+volatility -f memory.dump --profile=Win7SP1x64 netscan
+```
+
+---
+
+## Key Calculations & Formulas
+
+### Buffer Overflow Payload Calculation
+```
+Payload = [Filler Bytes] + [Return Address] + [Shellcode]
+Filler = Buffer Size + Saved EBP (typically 4 bytes)
+```
+
+### Network Subnetting
+```
+/24 = 255.255.255.0 = 256 hosts
+/16 = 255.255.0.0 = 65,536 hosts
+/8 = 255.0.0.0 = 16,777,216 hosts
+```
+
+### Password Strength Calculation
+```
+Keyspace = Character_Set^Password_Length
+Time_to_Crack = Keyspace / (2 × Guesses_per_Second)
+```
+
+---
+
+## Common Attack Patterns Summary
+
+### Buffer Overflow Patterns
+```c
+// Vulnerable functions
+gets(buffer)
+strcpy(dest, src)
+sprintf(buffer, format, args)
+```
+
+### SQL Injection Patterns
+```sql
+-- Authentication bypass
+admin'--
+' OR 1=1--
+
+-- Union injection
+' UNION SELECT username,password FROM users--
+
+-- Blind injection
+' AND SUBSTRING(password,1,1)='a'--
+```
+
+### XSS Patterns
+```html
+<script>alert('XSS')</script>
+<img src=x onerror=alert('XSS')>
+javascript:alert('XSS')
+```
+
+### Command Injection Patterns
+```bash
+; cat /etc/passwd
+&& whoami
+|| id
+`cat /etc/passwd`
+$(cat /etc/passwd)
+```
+
+---
+
 ## Assembly and Reverse Engineering Basics
 
 ### Assembly Instructions
@@ -6873,6 +7421,41 @@ For DNSSEC lookup of `cs.adelaide.edu.au`:
   - Same row: Move right
   - Same column: Move down  
   - Rectangle: Swap columns
+
+#### **Worked Example: Playfair Cipher**
+
+**Keyword**: SECURITY  
+**Plaintext**: HELLO WORLD
+
+**Step 1: Create 5×5 Grid**
+```
+S E C U R
+I T Y A B  
+D F G H K
+L M N O P
+Q V W X Z
+```
+
+**Step 2: Prepare Plaintext**
+- Remove spaces: HELLOWORLD
+- Split into pairs: HE LL OW OR LD
+- Insert X between duplicate letters: HE LX LO WO RL DX
+
+**Step 3: Apply Encryption Rules**
+
+| Pair | H-E | L-X | L-O | W-O | R-L | D-X |
+|------|-----|-----|-----|-----|-----|-----|
+| **Rule** | Rectangle | Rectangle | Same column | Same row | Same row | Same column |
+| **Process** | H(row 3,col 4)→G, E(row 1,col 2)→T | L(row 4,col 1)→D, X(row 5,col 4)→O | L(row 4,col 1)→M, O(row 4,col 4)→P | W(row 5,col 3)→X, O(row 4,col 4)→P | R(row 1,col 5)→S, L(row 4,col 1)→M | D(row 3,col 1)→F, X(row 5,col 4)→O |
+| **Result** | GT | DO | MP | XP | SM | FO |
+
+**Final Ciphertext**: GTDOMPXPSMFO
+
+**Decryption Process**:
+- Same rules but reverse direction:
+  - Same row: Move left
+  - Same column: Move up
+  - Rectangle: Swap columns (same as encryption)
 
 ### Buffer Overflow Calculations
 ```python
