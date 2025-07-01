@@ -1,141 +1,155 @@
 # Cybersec Exam Notes 2025
 
-## 📚 **DETAILED TABLE OF CONTENTS**
+## 📚 **TABLE OF CONTENTS**
 
-### 📋 **QUICK REFERENCE TABLES** 
-| **Topic** | **Content** | **Key Details** |
-|-----------|-------------|-----------------|
-| [Common Ports & Services](#common-ports-and-services) | Port numbers, protocols, uses | FTP(21), SSH(22), HTTP(80), HTTPS(443), RDP(3389) |
-| [OWASP Top 10](#owasp-top-10-web-application-security-risks) | Web vulnerabilities ranking | Injection, Broken Auth, XSS, Insecure Design |
-| [Buffer Overflow Defenses](#buffer-overflow-protection-mechanisms) | ASLR, DEP, Canaries, PIE | Protection mechanisms & bypass techniques |
-| [CVSS Scoring](#cvss-scoring-breakdown) | Vulnerability severity rating | 0-3.9 Low, 4-6.9 Medium, 7-8.9 High, 9-10 Critical |
-| [Crypto Key Strength](#cryptographic-key-strength) | Recommended key sizes | RSA 3072+, AES 256, ECC 256, SHA-256/SHA-3 |
+### 📋 **QUICK REFERENCE TABLES** *(Pages 5-6)*
 
----
+| **Section** | **Detailed Subheadings** | **Page** |
+|-------------|--------------------------|----------|
+| Common Ports & Services | Common Ports and Services | 5 |
+| OWASP Top 10 | OWASP Top 10 Web Application Security Risks | 5 |
+| Buffer-Overflow Defences | Buffer Overflow Protection Mechanisms, Shadow Stack | 6 |
+| CVSS Scoring | CVSS Scoring Breakdown, Severity Ratings, Vector String Example | 6 |
+| Crypto Key Strength | Cryptographic Key Strength, Recommended Key Sizes, Hash Functions | 6 |
+
+-----
 
 ### 📖 **CORE THEORY & CONCEPTS**
 
-#### **0x01 - INTRODUCTION & OVERVIEW** 
-| **Section** | **Topics Covered** | **Key Concepts** |
-|-------------|-------------------|------------------|
-| [Cybersecurity Overview](#cybersecurity-overview-and-career-pathways) | CIA Triad, threat actors, career paths | Confidentiality, Integrity, Availability |
-| [Threat Landscape](#why-do-cyber-criminals-exist) | MAO model, asymmetric forces | Motivation, Ability, Opportunity |
-| [Hacker Classifications](#hacker-hat-colors) | White/Black/Grey hat hackers | Ethical boundaries and motivations |
-| [Linux Basics](#linux-commands-and-basics) | Essential commands, file system | Command line navigation and tools |
+#### **0x01 – INTRODUCTION & OVERVIEW** *(Pages 7-12)*
 
-#### **0x02 - CRYPTOGRAPHY** 
-| **Section** | **Topics Covered** | **Key Algorithms & Concepts** |
-|-------------|-------------------|-------------------------------|
-| [Classical Ciphers](#2-classical-ciphers) | Caesar, Vigenère, **Playfair** | **Includes worked Playfair example** |
-| [Symmetric Crypto](#3-symmetric-encryption) | AES, DES, block/stream ciphers | ECB vs CBC modes, key sizes |
-| [Hash Functions](#4-hash-functions) | SHA family, MD5, properties | One-way, fixed-length, avalanche effect |
-| [Asymmetric Crypto](#7-asymmetric-encryption-rsa) | RSA, key pairs, digital signatures | Public/private keys, key exchange |
-| [**Diffie-Hellman**](#6-diffie-hellman-key-exchange) | Key exchange protocol | **Includes detailed MITM attack scenario** |
-| [PKI & Certificates](#8-digital-certificates-and-pki) | X.509, certificate chains, trust | Root CA, intermediate CA, validation |
+| **Section** | **Detailed Subheadings** | **Page** |
+|-------------|--------------------------|----------|
+| Cybersecurity Overview | What is Cybersecurity?, Security Goals: The CIA Triad, Common Cybersecurity Terms | 7-9 |
+| Threat Landscape | Why Do Cyber-Criminals Exist?, Threat Actors, Asymmetric Forces | 8-10 |
+| Hacker Classifications | Hacker Hat Colors | 10 |
+| Current Cybersecurity Trends | Current Cybersecurity Trends | 10-11 |
 
-#### **0x03 - RECONNAISSANCE & OSINT** 
-| **Section** | **Topics Covered** | **Tools & Techniques** |
-|-------------|-------------------|------------------------|
-| [OSINT Fundamentals](#introduction-to-security-assessment) | Information gathering methodology | Passive vs active reconnaissance |
-| [DNS Reconnaissance](#basic-dns-queries) | Zone transfers, subdomain enum | nslookup, dig, dnsrecon |
-| [Google Dorking](#google-dorking) | Advanced search operators | site:, filetype:, inurl: operators |
-| [Social Engineering](#social-media-reconnaissance) | HUMINT, pretexting | Psychological manipulation techniques |
-| [Recon-ng Framework](#recon-ng-framework) | Automated OSINT collection | Modules, workspaces, data correlation |
+#### **0x02 – CRYPTOGRAPHY** *(Pages 10-22)*
 
-#### **0x04 - NETWORK SCANNING** 
-| **Section** | **Topics Covered** | **Nmap & Tools** |
-|-------------|-------------------|------------------|
-| [Network Fundamentals](#network-fundamentals) | TCP/IP, subnetting, protocols | Three-way handshake, UDP vs TCP |
-| [Port Scanning](#port-scanning-fundamentals) | TCP/UDP scanning techniques | SYN, Connect, UDP, stealth scans |
-| [Nmap Mastery](#nmap-scanning-techniques) | Scan types, timing, evasion | -sS, -sT, -sU, -A, -T timing |
-| [Service Enumeration](#service-version-detection) | Banner grabbing, version detection | -sV, -sC, NSE scripts |
-| [Network Mapping](#network-discovery) | Host discovery, topology mapping | Ping sweeps, traceroute, ARP scans |
+| **Section** | **Detailed Subheadings** | **Page** |
+|-------------|--------------------------|----------|
+| Crypto Terminology | Key Definitions, Goals of Cryptography | 11 |
+| Classical Ciphers | Caesar Cipher, Vigenère Cipher, Substitution Cipher, Transposition Cipher, Kerckhoffs's Principle, Shannon's Maxim | 11-12 |
+| Symmetric Crypto | Concept, XOR and Digital Encryption, Block vs Stream Ciphers, Common Symmetric Ciphers | 11-13 |
+| Asymmetric Crypto | Concept, RSA Mathematics, RSA Security, RSA Digital Signature | 14-15 |
+| Diffie-Hellman | Process, Security, Color Analogy, Diffie-Hellman MITM Attack | 14 |
+| Hash Functions | Properties, Common Hash Functions, MD5 Collision Example | 15 |
+| PKI & Certificates | Digital Signatures, Certificate Authority (CA), TLS/HTTPS Implementation, Password Security, Key Security Considerations, Attack Methods and Tools, Exam Tips and Key Concepts | 16-22 |
 
-#### **0x05 & 0x06 - MEMORY ATTACKS** 
-| **Section** | **Topics Covered** | **Attack Techniques** |
-|-------------|-------------------|----------------------|
-| [Buffer Overflow Basics](#1-control-hijacking-attacks) | Stack layout, vulnerable functions | strcpy, gets, stack frames |
-| [Exploit Development](#basic-buffer-overflow-exploit) | Shellcode, return addresses | EIP control, payload construction |
-| [Return-to-libc](#return-to-libc-attack) | DEP bypass techniques | Function chaining, ROP gadgets |
-| [Memory Protections](#memory-protection-mechanisms) | ASLR, DEP, Stack Canaries | Bypass methods, information leaks |
-| [Advanced Techniques](#format-string-vulnerabilities) | Format strings, heap exploits | printf vulnerabilities, use-after-free |
+#### **0x03 – RECONNAISSANCE & OSINT** *(Pages 22-34)*
 
-#### **0x07 - NETWORK ATTACKS & DEFENSE** 
-| **Section** | **Topics Covered** | **Attack Vectors** |
-|-------------|-------------------|-------------------|
-| [Packet Sniffing](#packet-sniffing) | Network eavesdropping | Wireshark, tcpdump, promiscuous mode |
-| [MITM Attacks](#man-in-the-middle-mitm-attacks) | ARP poisoning, session hijacking | ettercap, arpspoof, SSL stripping |
-| [**DNS Attacks**](#dns-attacks) | DNS spoofing, cache poisoning | **Includes DNS over TCP security analysis** |
-| [DoS/DDoS](#denial-of-service-dos-and-ddos-attacks) | SYN flood, amplification attacks | Volumetric, protocol, application layer |
-| [**WiFi Security**](#wifi-security) | WPA2/WPA3 attacks, handshake capture | **Includes detailed PSK decryption scope** |
+| **Section** | **Detailed Subheadings** | **Page** |
+|-------------|--------------------------|----------|
+| OSINT Fundamentals | Introduction to Security Assessment, Security Assessment Classifications | 22-25 |
+| DNS Reconnaissance | Essential DNS Commands, DNS Record Types, Automated DNS Tools, WHOIS Investigation | 30-31 |
+| Google Dorking | Basic Operators, Advanced Techniques | 30 |
+| Social Media Recon | Penetration Testing Framework, Other Assessment Types | 25-30 |
+| Recon-ng Framework | Specialized OSINT Platforms, Advanced Reconnaissance Tools, Penetration Testing vs Vulnerability Assessment, Exam Preparation Tips | 31-35 |
 
-#### **0x08 & 0x09 - WEB APPLICATION SECURITY** 
-| **Section** | **Topics Covered** | **Common Vulnerabilities** |
-|-------------|-------------------|---------------------------|
-| [HTTP Fundamentals](#http-basics--web-architecture) | Requests, responses, headers | GET/POST, status codes, cookies |
-| [SQL Injection](#sql-injection-attacks) | Union, blind, boolean-based | sqlmap, manual injection techniques |
-| [XSS Attacks](#cross-site-scripting-xss) | Stored, reflected, DOM-based | Script injection, cookie theft |
-| [CSRF & Session Mgmt](#cross-site-request-forgery-csrf) | Token validation, SameSite | Session fixation, hijacking |
-| [Advanced Exploits](#advanced-injection-techniques) | XXE, SSRF, deserialization | Complex injection vectors |
+#### **0x04 – NETWORK SCANNING** *(Pages 34-45)*
 
-#### **0x0A - DIGITAL FORENSICS & REVERSE ENGINEERING** 
-| **Section** | **Topics Covered** | **Tools & Techniques** |
-|-------------|-------------------|------------------------|
-| [Digital Forensics](#digital-forensics-and-incident-response-dfir) | Evidence acquisition, chain of custody | Volatile vs non-volatile analysis |
-| [File Analysis](#file-format-analysis) | File carving, metadata extraction | binwalk, exiftool, strings |
-| [Memory Forensics](#memory-analysis-with-volatility) | RAM analysis, process investigation | Volatility, memory dumps |
-| [Reverse Engineering](#introduction-to-reverse-engineering) | Static/dynamic analysis | Ghidra, GDB, disassembly |
-| [Malware Analysis](#malware-analysis-fundamentals) | Behavioral analysis, indicators | Sandboxing, signature detection |
+| **Section** | **Detailed Subheadings** | **Page** |
+|-------------|--------------------------|----------|
+| Network Fundamentals | Overview and Objectives, Fundamental Networking Concepts, Network Layer Protocols, Transport Layer Protocols, Internet Control Message Protocol (ICMP) | 34-39 |
+| Port Scanning | Host Discovery Methods, Port Scanning Techniques | 39-41 |
+| Nmap Mastery | Advanced Scanning Techniques, Nmap Command Reference | 41-44 |
+| Service Enumeration | Post-Scanning Analysis, Defense Against Scanning, Summary | 44-45 |
+| Network Mapping | Network Topology Discovery, Mass Scanning Considerations | 42-43 |
 
-#### **0x0B - SECURITY FRAMEWORKS** 
-| **Section** | **Topics Covered** | **Standards & Frameworks** |
-|-------------|-------------------|---------------------------|
-| [Risk Management](#risk-management-fundamentals) | ALE, SLE, ARO calculations | Quantitative risk assessment |
-| [Security Frameworks](#security-frameworks-and-standards) | NIST, ISO 27001, CIS Controls | Compliance and governance |
-| [Incident Response](#incident-response-lifecycle) | NIST IR framework | Preparation, detection, containment |
-| [Business Continuity](#business-continuity-planning) | BCP, DRP, recovery objectives | RTO, RPO, backup strategies |
+#### **0x05 & 0x06 – MEMORY ATTACKS** *(Pages 45-63)*
 
-#### **0x0C - METASPLOIT & ETHICS** 
-| **Section** | **Topics Covered** | **Key Components** |
-|-------------|-------------------|-------------------|
-| [Metasploit Framework](#workshop-0x0c-introduction-to-metasploit) | Modules, payloads, exploits | msfconsole, auxiliary modules |
-| [**Ethics in Cybersecurity**](#ethics-in-cybersecurity) | Ethical frameworks, decision-making | **Includes ACS 6 Values detail** |
-| [Professional Standards](#professional-ethics-context) | Legal compliance, codes of conduct | GDPR, professional responsibility |
+| **Section** | **Detailed Subheadings** | **Page** |
+|-------------|--------------------------|----------|
+| Memory Layout | Control Hijacking Attacks, Computer Architecture (x86 - 32 bit), Stack Management & Function Calls | 45-47 |
+| Buffer Overflow Basics | Buffer Overflow Attacks | 47-48 |
+| Exploit Development | Shellcode & Exploitation, Advanced Topics, Remote Buffer Overflow | 49-56, 62 |
+| Format String Vulns | Format String Attacks, Workshop Activities & Practical Exercises | 50-54 |
+| Return-to-libc | Return to libc Attack, Key Defense Bypass Techniques | 57-58, 63 |
+| Defense Mechanisms | Defense Considerations (Preview), Defense Mechanisms, Exam Key Points | 56, 59-61, 63 |
 
----
+#### **0x07 – NETWORK ATTACKS & DEFENCE** *(Pages 63-74)*
 
-### 📕 **QUICK THEORY REFERENCE** 
-| **Domain** | **Key Concepts** | **Quick Facts** |
-|------------|------------------|-----------------|
-| [Cryptography Summary](#cryptography-fundamentals) | Algorithms, modes, key management | Symmetric vs asymmetric trade-offs |
-| [Memory Security Summary](#memory-security-and-buffer-overflows) | Stack layout, protections, bypasses | x86 registers, exploit mitigations |
-| [Network Security Summary](#network-security) | Protocols, attacks, defenses | TCP handshake, port scanning |
-| [Web Security Summary](#web-application-security) | OWASP, injection, session management | Input validation, output encoding |
-| [Forensics Summary](#digital-forensics-and-reverse-engineering) | Investigation process, tools | Evidence handling, analysis |
+| **Section** | **Detailed Subheadings** | **Page** |
+|-------------|--------------------------|----------|
+| Packet Sniffing | Definition, CIA Impact, Types of Networks for Sniffing, Sniffing Tools and Techniques | 63-65 |
+| MITM Attacks | ARP (Address Resolution Protocol) Fundamentals, MITM via ARP Cache Poisoning, MITM Attack Flow, Ettercap - Automated MITM Tool | 65-66 |
+| DNS Attacks | DNS System Overview, Types of DNS Attacks, DNSSEC (DNS Security Extensions), DNS over TCP vs UDP Security Considerations | 66-68 |
+| DoS/DDoS | Denial of Service (DoS) and DDoS Attacks, TCP Reset (RST) Injection, SYN Flooding Attack, Distributed Denial-of-Service (DDoS) | 68-69 |
+| WiFi Security | WiFi Security, WiFi Security Evolution, WEP (Wired Equivalent Privacy), WPA2 Security, WPA2 Attack Methods, Recent WiFi Vulnerabilities, Global WiFi Encryption Trends, Firewalls and Intrusion Detection Systems, Countermeasures and Best Practices, Practical Workshop Exercises, Exam Preparation Tips | 69-75 |
 
----
+#### **0x08 & 0x09 – WEB APPLICATION SECURITY** *(Pages 74-104)*
 
-### 🔧 **COMMAND REFERENCE** 
-| **Tool Category** | **Primary Tools** | **Common Use Cases** |
-|-------------------|-------------------|---------------------|
-| [Network Scanning](#nmap-scanning-commands) | nmap, masscan | Port discovery, service enumeration |
-| [Cryptography](#openssl-commands) | openssl | Key generation, encryption, certificates |
-| [Exploit Development](#gdb-commands-for-exploit-development) | gdb, objdump | Debugging, reverse engineering |
-| [Web Testing](#web-application-testing) | sqlmap, burp, dirb | SQL injection, directory busting |
-| [Network Analysis](#wireshark-filter-syntax) | Wireshark, tcpdump | Packet analysis, traffic inspection |
-| [Forensics](#volatility-memory-forensics) | Volatility, binwalk | Memory analysis, file carving |
-| [Password Attacks](#password-cracking-johnhashcat) | John, Hashcat | Hash cracking, password testing |
+| **Section** | **Detailed Subheadings** | **Page** |
+|-------------|--------------------------|----------|
+| HTTP & Web Architecture | What is the Web?, Elements of the Web, HTTP (Hypertext Transfer Protocol), Web Application Architecture (3-Tier), HTTP Headers, Cookies | 74-78 |
+| Web Analysis Tools | Developer Tools (Built-in Browser Tools), Local Proxy Tools, Server-Side Scripting (PHP) | 78-80 |
+| SQL Injection | Database Fundamentals, SQL Basics, SQL Injection Attack Types, Advanced SQL Injection Techniques, Blind SQL Injection, SQLMap Tool | 80-84 |
+| Cross-Site Scripting (XSS)| JavaScript Fundamentals, Cross-Site Scripting (XSS), Session Hijacking via XSS, XSS Defense Mechanisms | 94-97 |
+| CSRF & Session Mgmt | Cross-Site Request Forgery (CSRF), CSRF Attack Examples, CSRF vs Reflected XSS, CSRF Defense Mechanisms | 97-99 |
+| Advanced Web Attacks | Server-Side Request Forgery (SSRF), Directory Traversal and Forced Browse, File Upload Vulnerabilities, Local File Inclusion (LFI), BeEF XSS Framework (Optional), Defense Summary, Key Exam Points | 99-104 |
 
----
+#### **0x0A – DIGITAL FORENSICS & REVERSE ENGINEERING** *(Pages 104-115)*
 
-### 🎯 **EXAM-SPECIFIC CONTENT** 
-| **Category** | **Content** | **Exam Weight** |
-|--------------|-------------|-----------------|
-| [Assembly Basics](#assembly-and-reverse-engineering-basics) | x86 registers, instructions | Medium - understanding required |
-| [**Calculations & Formulas**](#essential-calculations-and-formulas) | ALE, CVSS, **Playfair cipher** | **High - computational questions** |
-| [Critical Reminders](#-critical-exam-reminders) | Strategy, common mistakes | Essential for exam success |
-| [Review Checklist](#-review-checklist) | Final preparation items | Pre-exam verification |
-| [**Glossary**](#glossary-of-key-terms) | 500+ technical terms | **Reference during open-book exam** |
+| **Section** | **Detailed Subheadings** | **Page** |
+|-------------|--------------------------|----------|
+| DFIR Process | Digital Forensics and Incident Response (DFIR), Cyber Incident Response Team (CIRT), Forensics Definition, Phases of the Forensics Process (NIST 800-86) | 104-105 |
+| Forensic Domains | Forensic Areas of Practice | 105-106 |
+| File & Data Analysis | Network and File Forensics, Steganography and Steganalysis, Logs for Digital Forensics | 106-109 |
+| Reverse Engineering | Reverse Engineering, Assembly Language and x86 Architecture, Static and Dynamic Analysis, Tools and Practical Applications, Reverse Engineering Tools, Practical Workshop Exercises, CTF vs Real World Forensics, Key Exam Points | 109-115 |
+
+#### **0x0B – SECURITY FRAMEWORKS** *(Pages 115-126)*
+
+| **Section** | **Detailed Subheadings** | **Page** |
+|-------------|--------------------------|----------|
+| Risk Management | Manual Log Analysis, SIEM Systems, Information Security and Risk Management | 116-122 |
+| SOC Operations | Security Operations Center (SOC), Indicators of Compromise (IOCs), MITRE ATT&CK Framework, SIEM - Splunk | 122-125 |
+| Governance Frameworks | Security Engineering, Operations, and Management, 10 Security Principles (Modified OWASP List), Information Security Management Frameworks | 117-126 |
+| Business Continuity | Key Exam Points Summary | 126 |
+
+#### **0x0C – METASPLOIT & ETHICS** *(Pages 126-133)*
+
+| **Section** | **Detailed Subheadings** | **Page** |
+|-------------|--------------------------|----------|
+| Metasploit Framework | Workshop 0x0C: Introduction to Metasploit, Scanning and Reconnaissance, Exploitation Examples, Module Development, GUI Interface: Armitage | 126-130 |
+| Ethics in Cybersecurity | Ethics in Cybersecurity, Fundamental Concepts, Ethical Behavior Framework, Three Major Ethical Schools, Critical Ethical Questions in Cybersecurity, Reflection Framework, Professional Ethics Context, Current Industry Focus, GDPR as Ethics in Law, Complex Ethical Scenarios, Practical Application, Key Takeaways, Key Terms Glossary | 130-134 |
+
+-----
+
+### 📕 **QUICK THEORY REFERENCE** *(Pages 139-146)*
+
+| **Section** | **Detailed Subheadings** | **Page** |
+|------------|--------------------------|----------|
+| Cryptography Summary | Cryptography Fundamentals | 139-140 |
+| Memory Security Summary | Memory Security and Buffer Overflows | 140-142 |
+| Network Security Summary | Network Security | 142-143 |
+| Web Security Summary | Web Application Security | 144-145 |
+| Forensics Summary | Digital Forensics and Reverse Engineering | 146 |
+
+-----
+
+### 🔧 **COMMAND REFERENCE** *(Pages 134-139)*
+
+| **Section** | **Detailed Subheadings** | **Page** |
+|-------------------|--------------------------|----------|
+| Network Scanning | Nmap Scanning Commands | 135 |
+| Cryptography | OpenSSL Commands | 135-136 |
+| Exploit Development | GDB Commands for Exploit Development, Metasploit Commands | 136-137 |
+| Network Analysis | Wireshark Filter Syntax | 137-138 |
+| Forensics | Volatility Memory Forensics | 138 |
+| Password Attacks | Password Cracking | 138-139 |
+
+-----
+
+### 🎯 **EXAM-SPECIFIC CONTENT** *(Pages 158-173)*
+
+| **Section** | **Detailed Subheadings** | **Page** |
+|--------------|--------------------------|----------|
+| Assembly Basics | Assembly and Reverse Engineering Basics | 161 |
+| Calculations & Formulas | Essential Calculations and Formulas | 160-161 |
+| Glossary | Glossary of Key Terms | 163-172 |
+| Critical Reminders | CRITICAL EXAM REMINDERS | 172-173 |
+| Review Checklist | REVIEW CHECKLIST, Final Tips | 172-173 |
 
 ---
 
@@ -228,8 +242,7 @@ Hash Functions:
 
 ## Table of Contents
 1. [Cybersecurity Overview and Career Pathways](#cybersecurity-overview-and-career-pathways)
-2. [Linux Commands and Basics](#linux-commands-and-basics)
-3. [Advanced Cybersecurity Course Structure](#advanced-cybersecurity-course-structure)
+2. [Advanced Cybersecurity Course Structure](#advanced-cybersecurity-course-structure)
 
 ---
 
