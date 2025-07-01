@@ -4882,6 +4882,8 @@ ret                            ; Return to caller
 ```
 
 ---
+![image](https://github.com/user-attachments/assets/4bdf3097-1783-4cec-b7f4-c0d25d75ba1c)
+![image](https://github.com/user-attachments/assets/2dca0422-7e1a-4cc5-92a1-e572faa945f6)
 
 ## Static and Dynamic Analysis
 
